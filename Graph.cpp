@@ -29,7 +29,11 @@ static pair<int, int> read_node(const ptree &t) {
             for (auto j = i->second.begin(); j != i->second.end(); ++j) {
                 if (j->first == "id") {
                     string str = j->second.data();
-                    id = stoi(str.substr(1));
+                    if (str.at(0) == '_') {
+                        id = stoi(str.substr(1));
+                    } else {
+                        id = stoi(str);
+                    }
                 }
             }
         } else if (i->first == "attr") {
@@ -37,6 +41,9 @@ static pair<int, int> read_node(const ptree &t) {
                 if (j->first == "int") {
                     string str = j->second.data();
                     label = stoi(str);
+                } else if (j->first == "string") {
+                    string str = j->second.data();
+                    label = (int)str.at(0);
                 }
             }
         }
@@ -53,10 +60,18 @@ static pair<pair<int, int>, int> read_edge(const ptree &t) {
             for (auto j = i->second.begin(); j != i->second.end(); ++j) {
                 if (j->first == "from") {
                     string str = j->second.data();
-                    x = stoi(str.substr(1));
+                    if (str.at(0) == '_') {
+                        x = stoi(str.substr(1));
+                    } else {
+                        x = stoi(str);
+                    }
                 } else if (j->first == "to") {
                     string str = j->second.data();
-                    y = stoi(str.substr(1));
+                    if (str.at(0) == '_') {
+                        y = stoi(str.substr(1));
+                    } else {
+                        y = stoi(str);
+                    }
                 }
             }
         } else if (i->first == "attr") {
