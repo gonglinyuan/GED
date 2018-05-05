@@ -5,7 +5,6 @@
 #include <cassert>
 #include "Model.h"
 #include "gurobi_c++.h"
-#include "main.h"
 
 using std::vector;
 using std::to_string;
@@ -71,27 +70,27 @@ pair<int, vector<int>> Model::solve() const {
     model.optimize();
     vector<int> res;
 #ifdef DEBUG
-//    cout << other_costs() << endl;
-//    double tmp = 1.0 * other_costs();
-//    cout << tmp << endl;
-//    for (int i = 1; i <= g1.n; ++i) {
-//        for (int j = 1; j <= g2.n; ++j) {
-//            if (x[i][j].get(GRB_DoubleAttr_X) > 0.5) {
-//                cout << "x " << i << ' ' << j << ' ' << x[i][j].get(GRB_DoubleAttr_X) << endl;
-//                tmp += x[i][j].get(GRB_DoubleAttr_X) * (1.0 * node_sub_cost(i, j) - 2.0 * c_node_ins);
-//            }
-//        }
-//    }
-//    cout << tmp << endl;
-//    for (int i = 0; i < g1.e.size(); ++i) {
-//        for (int j = 0; j < g2.e.size(); ++j) {
-//            if (y[i][j].get(GRB_DoubleAttr_X) > 0.5) {
-//                cout << "y " << i << ' ' << j << ' ' << y[i][j].get(GRB_DoubleAttr_X) << endl;
-//                tmp += y[i][j].get(GRB_DoubleAttr_X) * (1.0 * edge_sub_cost(i, j) - 2.0 * c_edge_ins);
-//            }
-//        }
-//    }
-//    cout << tmp << endl;
+    //    cout << other_costs() << endl;
+    //    double tmp = 1.0 * other_costs();
+    //    cout << tmp << endl;
+    //    for (int i = 1; i <= g1.n; ++i) {
+    //        for (int j = 1; j <= g2.n; ++j) {
+    //            if (x[i][j].get(GRB_DoubleAttr_X) > 0.5) {
+    //                cout << "x " << i << ' ' << j << ' ' << x[i][j].get(GRB_DoubleAttr_X) << endl;
+    //                tmp += x[i][j].get(GRB_DoubleAttr_X) * (1.0 * node_sub_cost(i, j) - 2.0 * c_node_ins);
+    //            }
+    //        }
+    //    }
+    //    cout << tmp << endl;
+    //    for (int i = 0; i < g1.e.size(); ++i) {
+    //        for (int j = 0; j < g2.e.size(); ++j) {
+    //            if (y[i][j].get(GRB_DoubleAttr_X) > 0.5) {
+    //                cout << "y " << i << ' ' << j << ' ' << y[i][j].get(GRB_DoubleAttr_X) << endl;
+    //                tmp += y[i][j].get(GRB_DoubleAttr_X) * (1.0 * edge_sub_cost(i, j) - 2.0 * c_edge_ins);
+    //            }
+    //        }
+    //    }
+    //    cout << tmp << endl;
 #endif
     for (int i = 1; i <= g1.n; ++i) {
         bool erased = true;
@@ -152,14 +151,19 @@ int Model::check_ans(std::vector<int> perm) const {
     for (int i = 0; i < g1.e.size(); ++i) {
         auto ed = g1.e[i];
         if (p[ed.x] != -1 && p[ed.y] != -1) {
+            bool found = false;
             for (int j = 0; j < g2.e.size(); ++j) {
                 auto e2 = g2.e[j];
                 if ((e2.x == p[ed.x] && e2.y == p[ed.y]) || (e2.x == p[ed.y] && e2.y == p[ed.x])) {
                     assert(!marked[j]);
                     marked[j] = true;
                     res += edge_sub_cost(i, j);
+                    found = true;
                     break;
                 }
+            }
+            if (!found) {
+                res += c_edge_ins;
             }
         } else {
             res += c_edge_ins;
