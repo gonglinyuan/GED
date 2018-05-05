@@ -1,0 +1,37 @@
+**********************************************************************************
+datasets for the ICPR 2016 Graph Distance Contest, Challenge 1.
+All graphs are in GXL format.
+**********************************************************************************
+
+see https://gdc2016.greyc.fr/ for more details.
+
+*** Content of the main folder ***********
+
+Each folder contains a dataset. For each dataset, the distance is not necessarily computed for all pairs of graphs:
+
+- For GREC-GED, there are 4 subsets, graphs to be tested in each subset are given in the files contained in folder 'GREC-subsets'. For each file, the distance is computed for each pair of graphs.
+
+- For MUTA-GED, there are 7 subsets, graphs to be tested in each subset are given in the files contained in folder 'MUTA-subsets'. For each file, the distance is computed for each pair of graphs.
+
+- For CMU-GED, there is no subset and all pairs of graphs in the file 'CMU-all-pairs.csv'
+
+- For acyclic, alkane, mao and pah, there is no subset, all pairs of graphs are tested. The complete list of graphs is given in the file 'dataset.cxl'
+
+**********************************************************************************
+
+*** Costs for Challenge 1 *****
+
+All attributes may not be used, check costs on the website: https://gdc2016.greyc.fr/#prog-c1
+examples of code in Java is also given for GREC/MUTA/CMU-GED datasets.
+
+
+**********************************************************************************
+
+*** About the datasets *****
+
+GREC-GED, MUTA-GED and CMU-GED are part of GDR4GED (http://www.rfai.li.univ-tours.fr/PublicData/GDR4GED/home.html). GREC-GED and MUTA-GED are special subsets of the IAM Graph Database Repository (http://www.fki.inf.unibe.ch/databases/iam-graph-database), and CMU is as set of Delaunay graphs computed from the House image sequence of the CMU/VASC Image Database (http://www.cs.cmu.edu/afs/cs/project/vision/vasc/idb/www/html_permanent//index.html).
+
+PAH, MAO, Alkane, Acyclic are part of the GREYC's Chemistry dataset (https://brunl01.users.greyc.fr/CHEMISTRY/).
+
+**********************************************************************************
+
