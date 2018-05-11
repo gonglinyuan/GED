@@ -3,8 +3,9 @@
 //
 
 #include <cassert>
+#include <iostream>
 #include "Model.h"
-#include "gurobi_c++.h"
+#include "IPSolver.h"
 
 using std::vector;
 using std::to_string;
@@ -14,60 +15,94 @@ using std::pair;
 using std::make_pair;
 
 pair<int, vector<int>> Model::solve() const {
-    GRBEnv env = GRBEnv();
-#ifndef DEBUG
-    env.set(GRB_IntParam_OutputFlag, 0);
-#endif
-    GRBModel model = GRBModel(env);
 //    GRBVar x = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, "x");
 //    GRBVar y = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, "y");
 //    GRBVar z = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, "z");
 //    model.setObjective(x + y + 2 * z, GRB_MAXIMIZE);
-//    model.addConstr(x + 2 * y + 3 * z <= 4, "c0");
+//     model.addConstr(x + 2 * y + 3 * z <= 4, "c0");
 //    model.addConstr(x + y >= 1, "c1");
 //    model.optimize();
-    GRBVar x[g1.n + 1][g2.n + 1], y[g1.e.size()][g2.e.size()];
-    GRBLinExpr obj = other_costs();
-    model.set(GRB_DoubleParam_TimeLimit, 25.0); // 25 seconds
+    int x[g1.n + 1][g2.n + 1], y[g1.e.size()][g2.e.size()], total_var = 0;
     for (int i = 1; i <= g1.n; ++i) {
         for (int j = 1; j <= g2.n; ++j) {
-            x[i][j] = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, "x_" + to_string(i) + "_" + to_string(j));
-            obj += x[i][j] * (1.0 * node_sub_cost(i, j) - 2.0 * c_node_ins);
+            x[i][j] = ++total_var;
         }
     }
     for (int i = 0; i < g1.e.size(); ++i) {
         for (int j = 0; j < g2.e.size(); ++j) {
-            y[i][j] = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, "y_" + to_string(i) + "_" + to_string(j));
-            obj += y[i][j] * (1.0 * edge_sub_cost(i, j) - 2.0 * c_edge_ins);
+            y[i][j] = ++total_var;
+        }
+    }
+    std::cerr<<"total_var: "<<total_var<<endl;
+    IPSolver solver(total_var, 25);
+    double aim[total_var + 1];
+    for (int i = 1; i <= total_var; ++i) {
+        aim[i] = 0;
+    }
+    for (int i = 1; i <= g1.n; ++i) {
+        for (int j = 1; j <= g2.n; ++j) {
+            // x[i][j] = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, "x_" + to_string(i) + "_" + to_string(j));
+            // obj += x[i][j] * (1.0 * node_sub_cost(i, j) - 2.0 * c_node_ins);
+            aim[x[i][j]] = 2.0 * c_node_ins - 1.0 * node_sub_cost(i, j);
+        }
+    }
+    for (int i = 0; i < g1.e.size(); ++i) {
+        for (int j = 0; j < g2.e.size(); ++j) {
+            // y[i][j] = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, "y_" + to_string(i) + "_" + to_string(j));
+            // c_obj += y[i][j] * (1.0 * edge_sub_cost(i, j) - 2.0 * c_edge_ins);
+            aim[y[i][j]] = 2.0 * c_edge_ins - 1.0 * edge_sub_cost(i, j);
         }
     }
     for (int i = 1; i <= g1.n; ++i) {
-        GRBLinExpr lhs = 0;
-        for (int j = 1; j <= g2.n; ++j) {
+        double cons[total_var + 1];
+        for (int idx = 0; idx <= total_var; ++idx) cons[idx] = 0;
+        /*for (int j = 1; j <= g2.n; ++j) {
             lhs += x[i][j];
         }
-        model.addConstr(lhs, GRB_LESS_EQUAL, 1.0, "c0_" + to_string(i));
+        model.addConstr(lhs, GRB_LESS_EQUAL, 1.0, "c0_" + to_string(i));*/
+        for (int j = 1; j <= g2.n; ++j) {
+            cons[x[i][j]] = 1;
+        }
+        solver.setcondition(cons, 1);
     }
     for (int j = 1; j <= g2.n; ++j) {
-        GRBLinExpr lhs = 0;
+        double cons[total_var + 1];
+        for (int idx = 0; idx <= total_var; ++idx) cons[idx] = 0;
+        /*GRBLinExpr lhs = 0;
         for (int i = 1; i <= g1.n; ++i) {
             lhs += x[i][j];
         }
-        model.addConstr(lhs, GRB_LESS_EQUAL, 1.0, "c1_" + to_string(j));
+        model.addConstr(lhs, GRB_LESS_EQUAL, 1.0, "c1_" + to_string(j));*/
+        for (int i = 1; i <= g1.n; ++i) {
+            cons[x[i][j]] = 1;
+        }
+        solver.setcondition(cons, 1);
     }
     for (int i = 0; i < g1.e.size(); ++i) {
-        GRBLinExpr lhs[g2.n + 1] = {0};
+        double cons[g2.n + 1][total_var];
+        for (int j = 1; j <= g2.n; ++j)
+            for (int idx = 0; idx <= total_var; ++idx) {
+                cons[j][idx] = 0;
+            }
+        //GRBLinExpr lhs[g2.n + 1] = {0};
         for (int j = 0; j < g2.e.size(); ++j) {
-            lhs[g2.e[j].x] += y[i][j];
-            lhs[g2.e[j].y] += y[i][j];
+            //lhs[g2.e[j].x] += y[i][j];
+            //lhs[g2.e[j].y] += y[i][j];
+            cons[g2.e[j].x][y[i][j]] += 1;
+            cons[g2.e[j].y][y[i][j]] += 1;
         }
         for (int k = 1; k <= g2.n; ++k) {
-            model.addConstr(lhs[k], GRB_LESS_EQUAL, x[g1.e[i].x][k] + x[g1.e[i].y][k],
-                            "c2_" + to_string(i) + "_" + to_string(k));
+            cons[k][x[g1.e[i].x][k]] -= 1;
+            cons[k][x[g2.e[i].y][k]] -= 1;
+            solver.setcondition(cons[k], 0);
+            //model.addConstr(lhs[k], GRB_LESS_EQUAL, x[g1.e[i].x][k] + x[g1.e[i].y][k],
+            //                "c2_" + to_string(i) + "_" + to_string(k));
         }
     }
-    model.setObjective(obj, GRB_MINIMIZE);
-    model.optimize();
+    solver.solve();
+    //model.setObjective(obj, GRB_MINIMIZE);
+    //model.optimize();
+    int *way = solver.getway();
     vector<int> res;
 #ifdef DEBUG
     //    cout << other_costs() << endl;
@@ -96,7 +131,8 @@ pair<int, vector<int>> Model::solve() const {
         bool erased = true;
         for (int j = 1; j <= g2.n; ++j) {
 //            cout << i << ' ' << j << ' ' << x[i][j].get(GRB_DoubleAttr_X) << endl;
-            if (x[i][j].get(GRB_DoubleAttr_X) > 0.5) {
+            //if (x[i][j].get(GRB_DoubleAttr_X) > 0.5) {
+            if (way[x[i][j]] > 0.5) {
                 res.push_back(j);
                 erased = false;
                 break;
@@ -106,12 +142,13 @@ pair<int, vector<int>> Model::solve() const {
             res.push_back(-1);
         }
     }
-    int code;
-    if (model.get(GRB_IntAttr_Status) == GRB_OPTIMAL) {
+    int code = 1;
+    // TODO(jiruyi) check whether the solver finds the global optimal.
+    /*if (model.get(GRB_IntAttr_Status) == GRB_OPTIMAL) {
         code = 1;
     } else {
         code = 2;
-    }
+    }*/
     return make_pair(code, res);
 }
 
@@ -129,7 +166,9 @@ int Model::other_costs() const {
 
 int Model::check_ans(std::vector<int> perm) const {
     assert(perm.size() == g1.n);
-    int p[g1.n + 1] = {0}, r[g2.n + 1] = {0};
+    int p[g1.n + 1], r[g2.n + 1];
+    memset(p, 0x00, sizeof p);
+    memset(r, 0x00, sizeof r);
     int res = 0;
     for (int i = 1; i <= g1.n; ++i) {
         int j = perm[i - 1];
@@ -147,7 +186,8 @@ int Model::check_ans(std::vector<int> perm) const {
             res += c_node_ins;
         }
     }
-    bool marked[g2.e.size()] = {0};
+    bool marked[g2.e.size()];
+    memset(marked, 0x00, sizeof marked);
     for (int i = 0; i < g1.e.size(); ++i) {
         auto ed = g1.e[i];
         if (p[ed.x] != -1 && p[ed.y] != -1) {

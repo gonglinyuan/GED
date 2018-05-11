@@ -10,4 +10,4 @@ for i in range(len(lst)):
         for j in range(i, len(lst)):
             if lst[j].endswith(".gxl"):
                 # run(["F2_symbolic_distance", "2", "4", "1", "1", lst[i], lst[j]])
-                run(["./GED", "2", "4", "1", "1", lst[i], lst[j]])
+                run(["./../cmake-build-debug/GED", "2", "4", "1", "1", lst[i], lst[j]])
