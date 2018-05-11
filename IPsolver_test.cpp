@@ -32,14 +32,41 @@ double force() {
     }
     return best_ans;
 }
+
+void gentest() {
+    int way[n + 10];
+    for (int i = 1; i <= n; ++i) way[i] = rand() % 2;
+    for (int i = 1; i <= n; ++i) printf("%d", way[i]); puts("");
+    for (int i = 1; i <= n; ++i) A[0][i] = rand() % 10 - 5;
+    for (int i = 1; i <= m; ++i) {
+        A[i][0] = 0;
+        for (int j = 1; j <= n; ++j) {
+            A[i][j] = rand() % 10 - 5;
+            A[i][0] += A[i][j] * way[j];
+        }
+        A[i][0] += rand() % 5;
+    }
+}
+
 int main() {
+    srand(time(0));
     printf("start\n");
     scanf("%d%d", &n, &m);
-    for (int i = 1; i <= n; ++i) scanf("%d", &A[0][i]);
+    /*for (int i = 1; i <= n; ++i) scanf("%d", &A[0][i]);
     for (int i = 1; i <= m; ++i) {
         for (int j = 1; j <= n; ++j) scanf("%d", &A[i][j]);
         scanf("%d", &A[i][0]);
+    }*/
+    gentest();
+    for (int i = 1; i <=n; ++i) {
+        printf("%d ", A[0][i]);
+    } puts("");
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 0; j <= n; ++ j)
+            printf("%d ",A[i][j]);
+        printf("%d\n");
     }
+
     IPSolver solver(n, 5);
     for (int i = 1; i <= m; ++i) {
         for (int j = 0; j <= n; ++j) {
