@@ -99,10 +99,11 @@ pair<int, vector<int>> Model::solve() const {
             //                "c2_" + to_string(i) + "_" + to_string(k));
         }
     }
-    solver.solve();
+    solver.calculate();
     //model.setObjective(obj, GRB_MINIMIZE);
     //model.optimize();
     int *way = solver.getway();
+    std::cerr << -solver.getans() << std::endl;
     vector<int> res;
 #ifdef DEBUG
     //    cout << other_costs() << endl;

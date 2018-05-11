@@ -49,7 +49,7 @@ int main() {
     }
     for (int j = 1; j <= n; ++j) x[j] = A[0][j];
     solver.setmaximal(x);
-    solver.solve();
+    solver.calculate();
     double ans=solver.getans();
     double force_ans = force();
     printf("%lf %lf\n", ans, force_ans);
