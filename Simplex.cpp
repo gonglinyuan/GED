@@ -46,15 +46,16 @@ bool Simplex::solve() {
             if (n > 120) printf("out\n");
             return true;
         }
-//        if (n > 120) {
-//            printf("%.11lf\n", a[0][e]);
-//        }
+        if (n > 120) {
+            printf("%.11lf\n", a[0][e]);
+        }
         l = m + 1;
         idm[l] = n + m + 1;
         ma = -INF;
         for (int i = 1; i <= m; i++) {
             tmp = a[i][0] / a[i][e];
-            if (a[i][e] < -EPS && (tmp > ma + EPS || tmp > ma - EPS && idm[i] < idm[l])) {
+//            if (a[i][e] < -EPS && (tmp > ma + EPS || tmp > ma - EPS && idm[i] < idm[l])) {
+            if (a[i][e] < -EPS && tmp > ma) {
                 ma = tmp;
                 l = i;
             }
