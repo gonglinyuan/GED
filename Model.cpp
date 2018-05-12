@@ -22,7 +22,7 @@ pair<int, vector<int>> Model::solve() const {
 //     model.addConstr(x + 2 * y + 3 * z <= 4, "c0");
 //    model.addConstr(x + y >= 1, "c1");
 //    model.optimize();
-    int x[g1.n + 1][g2.n + 1], y[g1.e.size()][g2.e.size()], total_var = 0;
+    int x[g1.n + 1][g2.n + 1], y[g1.e.size()][g2.e.size()], total_var = 0, bias = 0;
     for (int i = 1; i <= g1.n; ++i) {
         for (int j = 1; j <= g2.n; ++j) {
             x[i][j] = ++total_var;
@@ -39,6 +39,7 @@ pair<int, vector<int>> Model::solve() const {
     for (int i = 1; i <= total_var; ++i) {
         aim[i] = 0;
     }
+    bias = other_costs();
     for (int i = 1; i <= g1.n; ++i) {
         for (int j = 1; j <= g2.n; ++j) {
             // x[i][j] = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, "x_" + to_string(i) + "_" + to_string(j));
@@ -49,7 +50,7 @@ pair<int, vector<int>> Model::solve() const {
     for (int i = 0; i < g1.e.size(); ++i) {
         for (int j = 0; j < g2.e.size(); ++j) {
             // y[i][j] = model.addVar(0.0, 1.0, 0.0, GRB_BINARY, "y_" + to_string(i) + "_" + to_string(j));
-            // c_obj += y[i][j] * (1.0 * edge_sub_cost(i, j) - 2.0 * c_edge_ins);
+            // obj += y[i][j] * (1.0 * edge_sub_cost(i, j) - 2.0 * c_edge_ins);
             aim[y[i][j]] = 2.0 * c_edge_ins - 1.0 * edge_sub_cost(i, j);
         }
     }
@@ -99,11 +100,13 @@ pair<int, vector<int>> Model::solve() const {
             //                "c2_" + to_string(i) + "_" + to_string(k));
         }
     }
+    solver.setmaximal(aim);
     solver.calculate();
     //model.setObjective(obj, GRB_MINIMIZE);
     //model.optimize();
     int *way = solver.getway();
-    std::cerr << -solver.getans() << std::endl;
+    std::cerr << -solver.getans() + bias << std::endl;
+    //while (1);
     vector<int> res;
 #ifdef DEBUG
     //    cout << other_costs() << endl;

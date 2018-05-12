@@ -44,7 +44,7 @@ void gentest() {
             A[i][j] = rand() % 10 - 5;
             A[i][0] += A[i][j] * way[j];
         }
-        A[i][0] += rand() % 5;
+        A[i][0] += rand() % 5 + 3;
     }
 }
 
