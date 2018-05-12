@@ -15,8 +15,8 @@
 
 #define EPS 1e-8
 #define INF 1e100
-#define MAXM (2200+5)
-#define MAXN (900+5)
+#define MAXM (4000+5)
+#define MAXN (2000+5)
 
 enum SimplexResult {
     INFEASIBLE, UNBOUNDED, BOUNDED
@@ -34,6 +34,7 @@ class Simplex {
 
 public:
     Simplex(int _n):n(_n), ans(-1e100), m(_n), bias(0) {
+        for (int i = 0; i < MAXM; ++i) a[i] = nullptr;
         a[0] = new double[n + 5];
         for (int i = 0; i <= n + 1; ++i) a[0][i] = 0;
         for (int i = 1; i <= n; ++i) {
@@ -48,7 +49,10 @@ public:
         bias = 0;
         ans = -1e100;
         for (int i = 0; i <= m + 2; ++i) {
-            if (a[i]) delete[] a[i];
+            if (a[i] != nullptr) {
+                delete[] a[i];
+                a[i] = nullptr;
+            }
         }
         n = pre.n; m = pre.m;
         for (int i = 0; i <= m; ++i) {
