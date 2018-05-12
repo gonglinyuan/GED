@@ -54,7 +54,6 @@ bool Simplex::solve() {
         ma = -INF;
         for (int i = 1; i <= m; i++) {
             tmp = a[i][0] / a[i][e];
-//            if (a[i][e] < -EPS && (tmp > ma + EPS || tmp > ma - EPS && idm[i] < idm[l])) {
             if (a[i][e] < -EPS && tmp > ma) {
                 ma = tmp;
                 l = i;
@@ -71,7 +70,7 @@ bool Simplex::solve() {
 SimplexResult Simplex::getresult() {
     for (int i = 1; i <= n; i++)idn[i] = i;
     for (int i = 1; i <= m; i++)idm[i] = i + n;
-    static double tmp[MAXN];
+    /*static double tmp[MAXN];
     double mi = 0.0;
     int l = -1;
     for (int i = 1; i <= m; i++)
@@ -111,7 +110,10 @@ SimplexResult Simplex::getresult() {
         if (idm[i] <= n) {
             for (int j = 0; j <= n; j++)a[0][j] += a[i][j] * tmp[idm[i]];
         }
-    for (int i = 1; i <= n; i++)if (idn[i] <= n)a[0][i] += tmp[idn[i]];
+    for (int i = 1; i <= n; i++)if (idn[i] <= n)a[0][i] += tmp[idn[i]];*/
+    // check if all 0 is a valid solution
+
+    for (int i = 1; i <= m; ++i) assert(a[i][0] > -EPS);
     if (!solve()) return UNBOUNDED;
     ans = a[0][0];
     return BOUNDED;
@@ -151,4 +153,50 @@ bool Simplex::setvar(int idx, int w) {
     bias += a[0][idx] * w;
     a[0][idx] = 0;
     return true;
+}
+
+void Simplex::copy(const Simplex& pre){
+    bias = 0;
+    ans = -1e100;
+    for (int i = 0; i <= m + 2; ++i) {
+        if (a[i] != nullptr) {
+            delete[] a[i];
+            a[i] = nullptr;
+        }
+    }
+    n = pre.n; m = pre.m;
+    for (int i = 0; i <= m; ++i) {
+        a[i] = new double[n + 5];
+        for (int j = 0; j <= n; ++j) a[i][j] = pre.a[i][j];
+    }
+}
+
+double Simplex::get_value_from_way(int *current_way) {
+    double ans = 0;
+    for (int i = 1; i <= n; ++i)
+        ans += a[0][i] * way[i];
+    for (int i = 1; i <= m; ++i) {
+        double sum = 0;
+        for (int j = 1; j <= n; ++j) sum += a[i][j] * current_way[j];
+        assert(sum + a[i][0] > -EPS);
+    }
+    return ans;
+}
+
+void Simplex::clear(int _n) {
+    for (int i = 0; i <= m + 2; ++i) {
+        if (a[i] != nullptr) {
+            delete[] a[i];
+            a[i] = nullptr;
+        }
+    }
+    a[0] = new double[n + 5];
+    n =_n; m = _n;
+    for (int i = 0; i <= n + 1; ++i) a[0][i] = 0;
+    for (int i = 1; i <= n; ++i) {
+        a[i] = new double[n + 5];
+        for (int j = 0; j <= n + 1; ++j) a[i][j] = 0;
+        a[i][i] = -1;
+        a[i][0] = 1;
+    }
 }

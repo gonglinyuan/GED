@@ -45,34 +45,13 @@ public:
         }
     }
 
-    void copy(const Simplex& pre) {
-        bias = 0;
-        ans = -1e100;
-        for (int i = 0; i <= m + 2; ++i) {
-            if (a[i] != nullptr) {
-                delete[] a[i];
-                a[i] = nullptr;
-            }
-        }
-        n = pre.n; m = pre.m;
-        for (int i = 0; i <= m; ++i) {
-            a[i] = new double[n + 5];
-            for (int j = 0; j <= n; ++j) a[i][j] = pre.a[i][j];
-        }
+    Simplex(): n(0), ans(-1e100), m(0), bias(0) {
+        for (int i = 0; i < MAXM; ++i) a[i] = nullptr;
     }
 
-    double get_value_from_way(int *way) {
-        double ans = 0;
-        for (int i = 1; i <= n; ++i)
-            ans += a[0][i] * way[i];
-        for (int i = 1; i <= m; ++i) {
-            double sum = 0;
-            for (int j = 1; j <= n; ++j) sum += a[i][j] * way[j];
-            assert(sum + a[i][0] > -EPS);
-        }
-        return ans;
-    }
-
+    void clear(int n);
+    void copy(const Simplex& pre);
+    double get_value_from_way(int* current_way);
     SimplexResult getresult();
     void setcondition(double *x, double b);
     void setmaximal(double *x);

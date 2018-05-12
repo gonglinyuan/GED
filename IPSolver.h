@@ -11,26 +11,27 @@
 
 #include <bitset>
 
-class candidate_solution {
-public:
-    std::bitset<MAXN> way;
-    int depth;
-    double value;
-    SimplexResult result;
-
-    int operator < (const candidate_solution& k1) const {
-        if (result == INFEASIBLE) return 0;
-        if (k1.result == INFEASIBLE) return 1;
-        return value < k1.value;
-    }
-    int operator > (const candidate_solution& k1) const {
-        return k1 < (*this);
-    }
-
-    candidate_solution(): way(0), depth(0), value(0), result(INFEASIBLE) {}
-};
-
 class IPSolver {
+
+    class candidate_solution {
+    public:
+        std::bitset<MAXN> way;
+        int depth;
+        double value;
+        SimplexResult result;
+
+        int operator < (const candidate_solution& k1) const {
+            if (result == INFEASIBLE) return 0;
+            if (k1.result == INFEASIBLE) return 1;
+            return value < k1.value;
+        }
+        int operator > (const candidate_solution& k1) const {
+            return k1 < (*this);
+        }
+
+        candidate_solution(): way(0), depth(0), value(0), result(INFEASIBLE) {}
+    };
+
     Simplex baseSimplex, currentSimplex;
     int n;
     int way[MAXN];
