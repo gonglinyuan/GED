@@ -15,9 +15,12 @@ int IPSolver::check_TL() {
 }
 
 void IPSolver::get_value_for_candidate(candidate_solution &current) {
-    currentSimplex = baseSimplex;
-    for (int idx = 1; idx < current.depth; ++idx) {
-        currentSimplex.setvar(idx, current.way[idx]);
+    currentSimplex.copy(baseSimplex);
+    for (int idx = 1; idx <= current.depth; ++idx) {
+        if (!currentSimplex.setvar(idx, current.way[idx])) {
+            current.result = INFEASIBLE;
+            return;
+        }
     }
     current.result = currentSimplex.getresult();
     assert(current.result != UNBOUNDED);
@@ -31,25 +34,21 @@ void IPSolver::extend_candidate(const candidate_solution& candidate, int list_id
     current.depth += 1;
     current.way[current.depth] = 0;
     get_value_for_candidate(current);
-    // printf("extend %.11lf ", current.value);
     if (current.result != INFEASIBLE && current.value > current_best + fabs(current_best) * 0.01) {
         list[list_id].push_back(current);
     }
     current.way[current.depth] = 1;
     get_value_for_candidate(current);
-    // printf("%.11lf\n", current.value);
     if (current.result != INFEASIBLE && current.value > current_best + fabs(current_best) * 0.01) {
         list[list_id].push_back(current);
     }
 }
 
 void IPSolver::solve(int width) {
-    // printf("start solve %d\n", width);
     list[0].clear();
     list[0].push_back(candidate_solution());
     int now_list = 0;
     for (int idx = 1; idx <= n; ++idx) {
-        // printf("%d\n", idx);
         if (list[now_list].size() == 0 || check_TL() == 0) {
             return;
         }
@@ -65,20 +64,19 @@ void IPSolver::solve(int width) {
     if (list[now_list].size() == 0) return;
     candidate_solution best_candidate = list[now_list][0];
     current_best = best_candidate.value;
-    // printf("%.11lf\n", current_best);
     for (int i = 1; i <= n; ++i) {
         way[i] = best_candidate.way[i];
-        // printf("%d", way[i]);
     }
-    // puts("");
+    get_value_for_candidate(best_candidate);
 }
 
 double IPSolver::calculate() {
     int width = 1;
-    // printf("var %d, cons %d\n", n, baseSimplex.getm());
+    printf("var %d, cons %d\n", n, baseSimplex.getm());
     while (width <= 1e6 && check_TL()) {
         solve(width);
         width += std::ceil(sqrt(width));
     }
+    assert(fabs(current_best - baseSimplex.get_value_from_way(way)) < EPS);
     return current_best;
 }

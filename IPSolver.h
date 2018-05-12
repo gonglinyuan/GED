@@ -13,7 +13,7 @@
 
 class candidate_solution {
 public:
-    std::bitset<KmaxN> way;
+    std::bitset<MAXN> way;
     int depth;
     double value;
     SimplexResult result;
@@ -33,7 +33,7 @@ public:
 class IPSolver {
     Simplex baseSimplex, currentSimplex;
     int n;
-    int way[KmaxN];
+    int way[MAXN];
     int time_limit;
     double current_best;
     clock_t start;
@@ -57,6 +57,8 @@ public:
     }
 
     double calculate();
-    double getans() {return current_best;}
+    double getans() {
+        return current_best;
+    }
     int* getway() {return way;}
 };

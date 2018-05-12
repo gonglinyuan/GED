@@ -33,7 +33,6 @@ pair<int, vector<int>> Model::solve() const {
             y[i][j] = ++total_var;
         }
     }
-    std::cerr<<"total_var: "<<total_var<<endl;
     IPSolver solver(total_var, 25);
     double aim[total_var + 1];
     for (int i = 1; i <= total_var; ++i) {
@@ -94,7 +93,7 @@ pair<int, vector<int>> Model::solve() const {
         }
         for (int k = 1; k <= g2.n; ++k) {
             cons[k][x[g1.e[i].x][k]] -= 1;
-            cons[k][x[g2.e[i].y][k]] -= 1;
+            cons[k][x[g1.e[i].y][k]] -= 1;
             solver.setcondition(cons[k], 0);
             //model.addConstr(lhs[k], GRB_LESS_EQUAL, x[g1.e[i].x][k] + x[g1.e[i].y][k],
             //                "c2_" + to_string(i) + "_" + to_string(k));
@@ -106,7 +105,6 @@ pair<int, vector<int>> Model::solve() const {
     //model.optimize();
     int *way = solver.getway();
     std::cerr << -solver.getans() + bias << std::endl;
-    //while (1);
     vector<int> res;
 #ifdef DEBUG
     //    cout << other_costs() << endl;

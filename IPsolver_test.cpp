@@ -4,8 +4,8 @@
 
 #include "IPSolver.h"
 
-int A[KmaxN][KmaxN];
-double x[KmaxN];
+int A[MAXM][MAXN];
+double x[MAXN];
 int n, m;
 
 double force() {

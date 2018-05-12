@@ -19,14 +19,26 @@ void Simplex::pivot(int l,int e){
 
 bool Simplex::solve() {
     int e,l; double ma,tmp;
+    if (n > 120) {
+        printf("in\n");
+    }
     while(1){
         e=n+1;idn[e]=n+m+1;
         for (int i=1;i<=n;i++)if(a[0][i]>EPS)
                 if(idn[i]<idn[e])e=i;
-        if(e==n+1) return true;
+        if(e==n+1){
+            //if (n > 120) printf("out\n");
+            return true;
+        }
+        /*if (n > 120) {
+            printf("%.11lf\n", a[0][e]);
+        }*/
         l=m+1;idm[l]=n+m+1;ma=-INF;
         for(int i=1;i<=m;i++)if(a[i][e]<-EPS && ((tmp=a[i][0]/a[i][e])>ma+EPS || tmp>ma-EPS && idm[i]<idm[l]))ma=tmp,l=i;
-        if(l==m+1) return false;
+        if(l==m+1){
+            // if (n > 120) printf("out\n");
+            return false;
+        }
         pivot(l,e);
     }
 }
@@ -74,7 +86,7 @@ SimplexResult Simplex::getresult(){
 }
 
 void Simplex::setcondition(double *x, double b) {
-    ++m;
+    ++m; a[m] = new double[n + 5];
     for (int i = 0; i <= n + 1; ++i) a[m][i] = 0;
     for (int i = 1; i <= n; ++i) a[m][i] = -x[i];
     a[m][0] = b;
@@ -91,13 +103,19 @@ double* Simplex::get_way(){
     return way;
 }
 
-void Simplex::setvar(int idx, int w) {
+bool Simplex::setvar(int idx, int w) {
     a[idx][idx] = a[idx][0] = 0;
     for (int i = 1; i <= m; ++i)
         if (a[i][idx]) {
             a[i][0] += a[i][idx] * w;
             a[i][idx] = 0;
+            int positive_var = 0;
+            for (int j = 1; j <= n; ++j) {
+                if (a[i][j] > EPS) ++positive_var;
+            }
+            if (positive_var == 0 && a[i][0] < -EPS) return 0;
         }
     bias += a[0][idx] * w;
     a[0][idx] = 0;
+    return 1;
 }

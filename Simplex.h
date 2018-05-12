@@ -10,34 +10,63 @@
 
 #include <cstring>
 #include <algorithm>
+#include <iostream>
+#include <cassert>
 
-const int KmaxN = 500;
 #define EPS 1e-8
 #define INF 1e100
-#define MAXM (300+5)
-#define MAXN (300+5)
+#define MAXM (2200+5)
+#define MAXN (900+5)
 
 enum SimplexResult {
     INFEASIBLE, UNBOUNDED, BOUNDED
 };
 
 class Simplex {
-    double a[MAXM][MAXN];
     double way[MAXN];
     int idm[MAXM], idn[MAXN];
-    int m, n;
     double ans, bias;
+    double* a[MAXM];
+    int m, n;
 
     void pivot(int l, int e);
     bool solve();
 
 public:
     Simplex(int _n):n(_n), ans(-1e100), m(_n), bias(0) {
+        a[0] = new double[n + 5];
+        for (int i = 0; i <= n + 1; ++i) a[0][i] = 0;
         for (int i = 1; i <= n; ++i) {
+            a[i] = new double[n + 5];
             for (int j = 0; j <= n + 1; ++j) a[i][j] = 0;
             a[i][i] = -1;
             a[i][0] = 1;
         }
+    }
+
+    void copy(const Simplex& pre) {
+        bias = 0;
+        ans = -1e100;
+        for (int i = 0; i <= m + 2; ++i) {
+            if (a[i]) delete[] a[i];
+        }
+        n = pre.n; m = pre.m;
+        for (int i = 0; i <= m; ++i) {
+            a[i] = new double[n + 5];
+            for (int j = 0; j <= n; ++j) a[i][j] = pre.a[i][j];
+        }
+    }
+
+    double get_value_from_way(int *way) {
+        double ans = 0;
+        for (int i = 1; i <= n; ++i)
+            ans += a[0][i] * way[i];
+        for (int i = 1; i <= m; ++i) {
+            double sum = 0;
+            for (int j = 1; j <= n; ++j) sum += a[i][j] * way[j];
+            assert(sum + a[i][0] > -EPS);
+        }
+        return ans;
     }
 
     SimplexResult getresult();
@@ -46,5 +75,5 @@ public:
     double get_answer() {return ans + bias;}
     double* get_way();
     int getm(){return m;}
-    void setvar(int idx, int w);
+    bool setvar(int idx, int w);
 };
