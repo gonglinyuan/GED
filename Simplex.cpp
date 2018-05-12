@@ -28,24 +28,27 @@ void Simplex::pivot(int l, int e) {
 bool Simplex::solve() {
     int e, l;
     double ma, tmp;
-//    if (n > 120) {
-//        printf("in\n");
-//    }
+    if (n > 120) {
+        printf("in\n");
+    }
     while (true) {
         e = n + 1;
         idn[e] = n + m + 1;
         for (int i = 1; i <= n; i++) {
-            if (a[0][i] > EPS && idn[i] < idn[e]) {
+//            if (a[0][i] > EPS && idn[i] < idn[e]) {
+//                e = i;
+//            }
+            if (a[0][i] > EPS && (e == n + 1 || a[0][i] > a[0][e])) {
                 e = i;
             }
         }
         if (e == n + 1) {
-            //if (n > 120) printf("out\n");
+            if (n > 120) printf("out\n");
             return true;
         }
-        /*if (n > 120) {
-            printf("%.11lf\n", a[0][e]);
-        }*/
+//        if (n > 120) {
+//            printf("%.11lf\n", a[0][e]);
+//        }
         l = m + 1;
         idm[l] = n + m + 1;
         ma = -INF;
@@ -57,7 +60,7 @@ bool Simplex::solve() {
             }
         }
         if (l == m + 1) {
-            // if (n > 120) printf("out\n");
+            if (n > 120) printf("out\n");
             return false;
         }
         pivot(l, e);
