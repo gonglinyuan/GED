@@ -3,7 +3,8 @@ project(GED)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(GED main.cpp Graph.cpp Graph.h Model.cpp Model.h main.h IPSolver.h IPSolver.cpp Simplex.cpp Simplex.h)
+add_executable(GED main.cpp Graph.cpp Graph.h Model.cpp Model.h main.h IPSolver.h
+        IPSolver.cpp Simplex.cpp Simplex.h GEDSolver.cpp GEDSolver.h)
 target_include_directories(GED PRIVATE)
 
 add_executable(IPsolver_test IPsolver_test.cpp IPSolver.cpp IPSolver.h Simplex.cpp Simplex.h)

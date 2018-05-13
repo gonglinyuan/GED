@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     g1.read_graph(argv[5]);
     g2.read_graph(argv[6]);
     Model model(c_node_sub, c_node_ins, c_edge_sub, c_edge_ins, g1, g2);
-    auto ans = model.solve();
+    auto ans = model.better_solve();
 
     cout << ans.first << ';' << "29.99";
     bool first_one = true;

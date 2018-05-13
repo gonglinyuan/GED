@@ -7,6 +7,8 @@
 
 #endif //GED_GEDSOVLER_H
 
+#include <vector>
+
 #include "Simplex.h"
 #include "Graph.h"
 
@@ -22,8 +24,8 @@ class GEDSolver {
         double value;
         SimplexResult result;
 
-        int operator > (const candidate_solution& k1) {
-            return value > k1.value;
+        int operator < (const candidate_solution& k1) const {
+            return value < k1.value;
         }
 
         candidate_solution():value(0) {
@@ -35,31 +37,35 @@ class GEDSolver {
     Graph g1, g2;
     int cost_ins_node, cost_sub_node;
     int cost_ins_edge, cost_sub_edge;
-    int current_ans;
+    int current_best;
     int way[MAXV];
-    vector<candidate_solution> list[2];
+    int time_limit;
+    std::vector<candidate_solution> list[2];
+    clock_t start;
 
+    int check_TL();
     int node_sub_cost(int i, int j);
     int edge_sub_cost(int i, int j);
-    int other_costs();
+    int other_costs() const;
     void get_lower_bound_for_candidate(candidate_solution& candidate);
     void get_final_value_for_candidate(candidate_solution& candidate);
     void solve(int width);
-    void extend(candidate_solution pre, vecotr<candidate_solution>& list);
+    void extend(candidate_solution pre, std::vector<candidate_solution>& list);
 
 public:
-    GEDSolver(Graph _g1, Graph _g2, int c_ins_node, int c_sub_node, int c_ins_edge, int c_sub_edge) {
+    GEDSolver(Graph _g1, Graph _g2, int c_ins_node, int c_sub_node, int c_ins_edge, int c_sub_edge, int TL) {
         g1 = _g1; g2 = _g2;
+        time_limit = TL;
         cost_ins_node = c_ins_node;
         cost_sub_node = c_sub_node;
         cost_ins_edge = c_ins_edge;
         cost_sub_edge = c_sub_edge;
-        current_ans = 1e9;
+        current_best = 1e9;
     }
 
     void calculate_GED();
     int* get_way() {return way;}
-    int get_GED() {return current_ans;}
+    int get_GED() {return current_best;}
 
 
 
