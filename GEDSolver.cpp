@@ -116,7 +116,6 @@ void GEDSolver::get_final_value_for_candidate(GEDSolver::candidate_solution &can
         if (candidate.node_state[i] == -1) {
             ans += cost_ins_node;
         } else {
-            if (used_node[candidate.node_state[i]]) while (1);
             assert(used_node[candidate.node_state[i]] == 0);
             used_node[candidate.node_state[i]] = 1;
             if (g1.label[i] != g2.label[candidate.node_state[i]])
@@ -186,16 +185,22 @@ void GEDSolver::solve(int width) {
         if (list[now_list].size() == 0 || check_TL() == 0) {
             return;
         }
+        //printf("%d %.10lf\n", idx, list[now_list][0].value);
         int next_list = now_list ^ 1;
         list[next_list].clear();
         for (const auto& candidate: list[now_list]) {
             extend(candidate, list[next_list]);
         }
         std::sort(list[next_list].begin(), list[next_list].end());
+        for (const auto& candidate: list[next_list]) {
+            candidate.print();
+        } puts("");
+        int kk; scanf("%d",&kk);
         list[next_list].resize(std::min(int(list[next_list].size()), width));
         now_list = next_list;
     }
     if (list[now_list].size() == 0) return;
+    printf("%d\n", int(list[now_list].size()));
     candidate_solution best_candidate = list[now_list][0];
     current_best = best_candidate.value;
     for (int i = 1; i <= g1.n; ++i) {
@@ -206,10 +211,11 @@ void GEDSolver::solve(int width) {
 
 void GEDSolver::calculate_GED() {
     start = clock();
-    printf("%d\n", g1.n * g2.n + int(g1.e.size() * g2.e.size()));
+    // printf("%d\n", g1.n * g2.n + int(g1.e.size() * g2.e.size()));
     int width = 1;
     while (width <= 1e6 && check_TL()) {
         solve(width);
         width += std::ceil(sqrt(width));
+        printf("%d\n", current_best);
     }
 }

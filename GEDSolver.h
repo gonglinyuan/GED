@@ -33,7 +33,7 @@ class GEDSolver {
         }
 
         void print() const {
-            printf("%d %d\n", depth, value);
+            printf("%d %.5lf\n", depth, value);
             for (int i = 1; i <= depth; ++i) printf("%d ", node_state[i]); puts("");
         }
     };
