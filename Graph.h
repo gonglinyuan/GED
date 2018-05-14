@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <vector>
 
 class Graph {
 public:
@@ -18,6 +19,7 @@ public:
     std::vector<Edge> e; // edges
     Graph();
     ~Graph();
+    Graph(const Graph &pre);
     void read_graph(std::string filename);
 };
 

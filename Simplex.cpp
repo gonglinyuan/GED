@@ -28,9 +28,6 @@ void Simplex::pivot(int l, int e) {
 bool Simplex::solve() {
     int e, l;
     double ma, tmp;
-    if (n > 120) {
-        printf("in\n");
-    }
     while (true) {
         e = n + 1;
         idn[e] = n + m + 1;
@@ -43,11 +40,7 @@ bool Simplex::solve() {
             }
         }
         if (e == n + 1) {
-            if (n > 120) printf("out\n");
             return true;
-        }
-        if (n > 120) {
-            printf("%.11lf\n", a[0][e]);
         }
         l = m + 1;
         idm[l] = n + m + 1;
@@ -60,7 +53,6 @@ bool Simplex::solve() {
             }
         }
         if (l == m + 1) {
-            if (n > 120) printf("out\n");
             return false;
         }
         pivot(l, e);
@@ -125,11 +117,15 @@ void Simplex::setcondition(double *x, double b) {
     for (int i = 0; i <= n + 1; ++i) a[m][i] = 0;
     for (int i = 1; i <= n; ++i) a[m][i] = -x[i];
     a[m][0] = b;
+    // printf("set condition %lf\n", b);
+    // for (int i = 1; i <= n; ++i) printf("%lf ", x[i]); puts("");
 }
 
 void Simplex::setmaximal(double *x) {
     for (int i = 0; i <= n + 1; ++i) a[0][i] = 0;
     for (int i = 1; i <= n; ++i) a[0][i] = x[i];
+    // printf("set maximal\n");
+    // for (int i = 1; i <= n; ++i) printf("%lf ", x[i]); puts("");
 }
 
 double *Simplex::get_way() {
@@ -184,14 +180,16 @@ double Simplex::get_value_from_way(int *current_way) {
 }
 
 void Simplex::clear(int _n) {
+    bias = 0;
+    ans = -1e100;
     for (int i = 0; i <= m + 2; ++i) {
         if (a[i] != nullptr) {
             delete[] a[i];
             a[i] = nullptr;
         }
     }
+    n = _n; m = _n;
     a[0] = new double[n + 5];
-    n =_n; m = _n;
     for (int i = 0; i <= n + 1; ++i) a[0][i] = 0;
     for (int i = 1; i <= n; ++i) {
         a[i] = new double[n + 5];

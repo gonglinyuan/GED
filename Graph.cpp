@@ -121,3 +121,10 @@ Graph::Graph() {
 Graph::~Graph() {
     delete[](label);
 }
+
+Graph::Graph(const Graph &pre) {
+    n = pre.n;
+    label = new int[n + 5];
+    for (int i = 1; i <= n; ++i) label[i] = pre.label[i];
+    e = pre.e;
+}

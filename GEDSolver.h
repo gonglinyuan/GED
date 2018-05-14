@@ -12,8 +12,8 @@
 #include "Simplex.h"
 #include "Graph.h"
 
-const int MAXV = 30;
-const int MAXE = 30;
+const int MAXV = 50;
+const int MAXE = 50;
 
 class GEDSolver {
 
@@ -28,8 +28,13 @@ class GEDSolver {
             return value < k1.value;
         }
 
-        candidate_solution():value(0) {
+        candidate_solution(): value(0), depth(0) {
             memset(node_state, 0x00, sizeof node_state);
+        }
+
+        void print() const {
+            printf("%d %d\n", depth, value);
+            for (int i = 1; i <= depth; ++i) printf("%d ", node_state[i]); puts("");
         }
     };
 
@@ -53,8 +58,8 @@ class GEDSolver {
     void extend(candidate_solution pre, std::vector<candidate_solution>& list);
 
 public:
-    GEDSolver(Graph _g1, Graph _g2, int c_ins_node, int c_sub_node, int c_ins_edge, int c_sub_edge, int TL) {
-        g1 = _g1; g2 = _g2;
+    GEDSolver(Graph _g1, Graph _g2, int c_ins_node, int c_sub_node, int c_ins_edge, int c_sub_edge, int TL):
+            g1(_g1), g2(_g2){
         time_limit = TL;
         cost_ins_node = c_ins_node;
         cost_sub_node = c_sub_node;
