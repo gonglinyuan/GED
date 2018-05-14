@@ -71,6 +71,7 @@ public:
     void calculate_GED();
     int* get_way() {return way;}
     int get_GED() {return current_best;}
+    void get_search_trace(std::vector<int> way);
 
 
 

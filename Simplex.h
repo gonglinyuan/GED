@@ -55,4 +55,5 @@ public:
     double* get_way();
     int getm(){return m;}
     bool setvar(int idx, int w);
+    void print();
 };

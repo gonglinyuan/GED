@@ -198,3 +198,13 @@ void Simplex::clear(int _n) {
         a[i][0] = 1;
     }
 }
+
+void Simplex::print() {
+    printf("%d %d\n", n, m);
+    for (int i = 1; i <= n; ++i) printf("%.3lf ", a[0][i]);
+    /*puts("");
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 0; j <= n; ++j) printf("%.3lf ", a[i][j]);
+        printf("\n");
+    }*/
+}

@@ -128,3 +128,12 @@ Graph::Graph(const Graph &pre) {
     for (int i = 1; i <= n; ++i) label[i] = pre.label[i];
     e = pre.e;
 }
+
+void Graph::print() {
+    printf("%d %d\n", n, int(e.size()));
+    for (int i = 1; i <= n; ++i) printf("%d ", label[i]);
+    puts("");
+    for (auto edge: e) {
+        printf("%d %d %d\n", edge.x, edge.y, edge.type);
+    }
+}

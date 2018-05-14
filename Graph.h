@@ -21,6 +21,7 @@ public:
     ~Graph();
     Graph(const Graph &pre);
     void read_graph(std::string filename);
+    void print();
 };
 
 
