@@ -7,7 +7,8 @@
 #include <cassert>
 
 void my_pause() {
-    int k1; scanf("%d", &k1);
+    int k1;
+    scanf("%d", &k1);
 }
 
 int GEDSolver::edge_sub_cost(int i, int j) {
@@ -71,7 +72,8 @@ void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &can
         for (int idx = 0; idx <= total_var; ++idx) cons[0][idx] = 0;
         for (int j = 1; j <= g2.n; ++j) {
             if (x[i][j] != -1) cons[0][x[i][j]] = 1;
-            else assert(init_value_x[i][j] == 0);
+            else
+                assert(init_value_x[i][j] == 0);
         }
         simplex_solver.setcondition(cons[0], 1);
     }
@@ -104,7 +106,7 @@ void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &can
     }
 
     simplex_solver.setmaximal(aim);
-   // printf("current solve\n"); simplex_solver.print();
+    // printf("current solve\n"); simplex_solver.print();
     candidate.result = simplex_solver.getresult();
     assert(candidate.result != UNBOUNDED);
     if (candidate.result != INFEASIBLE) {
@@ -161,7 +163,7 @@ void GEDSolver::get_final_value_for_candidate(GEDSolver::candidate_solution &can
     candidate.value = ans;
 }
 
-void GEDSolver::extend(GEDSolver::candidate_solution pre, std::vector <candidate_solution> &list) {
+void GEDSolver::extend(GEDSolver::candidate_solution pre, std::vector<candidate_solution> &list) {
     static int used[MAXV];
     // pre.print();
     memset(used, 0x00, sizeof used);
@@ -172,7 +174,9 @@ void GEDSolver::extend(GEDSolver::candidate_solution pre, std::vector <candidate
     pre.node_state[pre.depth] = -1;
     if (pre.depth == g1.n) {
         get_final_value_for_candidate(pre);
-    } else get_lower_bound_for_candidate(pre);
+    } else {
+        get_lower_bound_for_candidate(pre);
+    }
     if (pre.result != INFEASIBLE && pre.value < current_best)
         list.push_back(pre);
 
@@ -181,7 +185,9 @@ void GEDSolver::extend(GEDSolver::candidate_solution pre, std::vector <candidate
         pre.node_state[pre.depth] = i;
         if (pre.depth == g1.n) {
             get_final_value_for_candidate(pre);
-        } else get_lower_bound_for_candidate(pre);
+        } else {
+            get_lower_bound_for_candidate(pre);
+        }
         if (pre.result != INFEASIBLE && pre.value < current_best)
             list.push_back(pre);
     }
@@ -198,15 +204,15 @@ void GEDSolver::solve(int width) {
             return;
         }
         //printf("%d %.10lf\n", idx, list[now_list][0].value);
-        int next_list = now_list ^ 1;
+        int next_list = now_list ^1;
         list[next_list].clear();
-        for (const auto& candidate: list[now_list]) {
+        for (const auto &candidate: list[now_list]) {
             extend(candidate, list[next_list]);
         }
         std::sort(list[next_list].begin(), list[next_list].end());
         //for (auto k: list[next_list]) k.print();
         //my_pause();
-        list[next_list].resize(std::min(int(list[next_list].size()), width));
+        list[next_list].resize(std::min(list[next_list].size(), (size_t)width));
         now_list = next_list;
     }
     if (list[now_list].size() == 0) return;
@@ -247,6 +253,6 @@ void GEDSolver::calculate_GED() {
     while (width <= 1e6 && check_TL()) {
         solve(width);
         width += ceil(width / 2.0);
-        // printf("%d\n", current_best);
+        printf("%d\n", current_best);
     }
 }

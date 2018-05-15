@@ -28,18 +28,24 @@ void Simplex::pivot(int l, int e) {
 bool Simplex::solve() {
     int e, l;
     double ma, tmp;
+    int epoch = 0;
     while (true) {
+        ++epoch;
+        if (epoch > 2000) {
+            return true;
+        }
         e = n + 1;
-        idn[e] = n + m + 1;
+        idn[e] = n + m + 1;;
         for (int i = 1; i <= n; i++) {
-//            if (a[0][i] > EPS && idn[i] < idn[e]) {
-//                e = i;
-//            }
-            if (a[0][i] > EPS && (e == n + 1 || a[0][i] > a[0][e])) {
+            if (a[0][i] > EPS && idn[i] < idn[e]) {
                 e = i;
             }
+//            if (a[0][i] > EPS && (e == n + 1 || a[0][i] > a[0][e])) {
+//                e = i;
+//            }
         }
         if (e == n + 1) {
+//            printf("epoch num = %d\n", epoch);
             return true;
         }
         l = m + 1;
@@ -53,6 +59,7 @@ bool Simplex::solve() {
             }
         }
         if (l == m + 1) {
+//            printf("epoch num = %d\n", epoch);
             return false;
         }
         pivot(l, e);
@@ -151,7 +158,7 @@ bool Simplex::setvar(int idx, int w) {
     return true;
 }
 
-void Simplex::copy(const Simplex& pre){
+void Simplex::copy(const Simplex &pre) {
     bias = 0;
     ans = -1e100;
     for (int i = 0; i <= m + 2; ++i) {
@@ -160,7 +167,8 @@ void Simplex::copy(const Simplex& pre){
             a[i] = nullptr;
         }
     }
-    n = pre.n; m = pre.m;
+    n = pre.n;
+    m = pre.m;
     for (int i = 0; i <= m; ++i) {
         a[i] = new double[n + 5];
         for (int j = 0; j <= n; ++j) a[i][j] = pre.a[i][j];
@@ -188,7 +196,8 @@ void Simplex::clear(int _n) {
             a[i] = nullptr;
         }
     }
-    n = _n; m = _n;
+    n = _n;
+    m = _n;
     a[0] = new double[n + 5];
     for (int i = 0; i <= n + 1; ++i) a[0][i] = 0;
     for (int i = 1; i <= n; ++i) {
