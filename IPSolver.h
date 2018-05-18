@@ -10,6 +10,7 @@
 #include "Simplex.h"
 
 #include <bitset>
+#include <vector>
 
 class IPSolver {
 

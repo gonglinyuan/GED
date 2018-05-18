@@ -16,7 +16,7 @@ using std::pair;
 using std::make_pair;
 
 pair<int, vector<int> > Model::better_solve() const {
-    GEDSolver solver(g1, g2, c_node_ins, c_node_sub, c_edge_ins, c_edge_sub, 25);
+    GEDSolver solver(g1, g2, c_node_ins, c_node_sub, c_edge_ins, c_edge_sub, 75);
     solver.calculate_GED();
     int* way=solver.get_way();
     vector<int> ans;

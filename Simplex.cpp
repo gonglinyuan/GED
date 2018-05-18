@@ -4,6 +4,8 @@
 
 #include "Simplex.h"
 
+#include <cmath>
+
 void Simplex::pivot(int l, int e) {
     std::swap(idm[l], idn[e]);
     static int next[MAXN];

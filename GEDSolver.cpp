@@ -5,6 +5,7 @@
 #include "GEDSolver.h"
 
 #include <cassert>
+#include <cmath>
 
 void my_pause() {
     int k1;
@@ -194,12 +195,14 @@ void GEDSolver::extend(GEDSolver::candidate_solution pre, std::vector<candidate_
 }
 
 void GEDSolver::solve(int width) {
+    // printf("solve %d\n", width);
     list[0].clear();
     candidate_solution base;
     get_lower_bound_for_candidate(base);
     list[0].push_back(base);
     int now_list = 0;
     for (int idx = 1; idx <= g1.n; ++idx) {
+        // printf("current depth %d\n", idx);
         if (list[now_list].size() == 0 || check_TL() == 0) {
             return;
         }
@@ -247,12 +250,14 @@ void GEDSolver::get_search_trace(std::vector<int> way) {
 
 void GEDSolver::calculate_GED() {
     start = clock();
+    // printf("start calculate\n");
     // get_search_trace({1, 6, 5, 3, 8, 7});
     // printf("%d\n", g1.n * g2.n + int(g1.e.size() * g2.e.size()));
     int width = 1;
+    for (int i = 1; i <= g1.n; ++i) way[i] = -1;
     while (width <= 1e6 && check_TL()) {
         solve(width);
         width += ceil(width / 2.0);
-        printf("%d\n", current_best);
+        // printf("%f %d\n", current_best, check_TL());
     }
 }
