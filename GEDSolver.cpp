@@ -173,33 +173,27 @@ void GEDSolver::get_final_value_for_candidate(GEDSolver::candidate_solution &can
     candidate.value = ans;
 }
 
-void GEDSolver::extend(GEDSolver::candidate_solution pre, std::vector<candidate_solution> &list) {
-    static int used[MAXV];
-    // pre.print();
-    memset(used, 0x00, sizeof used);
-    pre.depth++;
-    for (int i = 1; i < pre.depth; ++i)
-        if (pre.node_state[i] != -1) used[pre.node_state[i]] = 1;
-
-    pre.node_state[pre.depth] = -1;
+void GEDSolver::_extend(GEDSolver::candidate_solution pre, std::vector<candidate_solution> &list, int i) const {
+    pre.node_state[pre.depth] = i;
     if (pre.depth == g1.n) {
         get_final_value_for_candidate(pre);
     } else {
         get_lower_bound_for_candidate(pre);
     }
-    if (pre.result != INFEASIBLE && pre.value < current_best)
+    if (pre.result != INFEASIBLE && pre.value < current_best) {
         list.push_back(pre);
+    }
+}
 
+void GEDSolver::extend(GEDSolver::candidate_solution pre, std::vector<candidate_solution> &list) const {
+    bool used[g2.n + 1] = {0};
+    pre.depth++;
+    for (int i = 1; i < pre.depth; ++i) {
+        if (pre.node_state[i] != -1) used[pre.node_state[i]] = true;
+    }
+    _extend(pre, list, -1);
     for (int i = 1; i <= g2.n; ++i) {
-        if (used[i]) continue;
-        pre.node_state[pre.depth] = i;
-        if (pre.depth == g1.n) {
-            get_final_value_for_candidate(pre);
-        } else {
-            get_lower_bound_for_candidate(pre);
-        }
-        if (pre.result != INFEASIBLE && pre.value < current_best)
-            list.push_back(pre);
+        if (!used[i]) _extend(pre, list, i);
     }
 }
 

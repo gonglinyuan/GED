@@ -62,7 +62,9 @@ class GEDSolver {
 
     void solve(int width);
 
-    void extend(candidate_solution pre, std::vector<candidate_solution> &list);
+    void _extend(GEDSolver::candidate_solution pre, std::vector<candidate_solution> &list, int i) const;
+
+    void extend(candidate_solution pre, std::vector<candidate_solution> &list) const;
 
 public:
     GEDSolver(Graph _g1, Graph _g2, int c_ins_node, int c_sub_node, int c_ins_edge, int c_sub_edge, int TL) :
