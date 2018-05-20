@@ -39,7 +39,6 @@ class GEDSolver {
         }
     };
 
-    Simplex simplex_solver;
     Graph g1, g2;
     int cost_ins_node, cost_sub_node;
     int cost_ins_edge, cost_sub_edge;

@@ -28,9 +28,8 @@ int GEDSolver::check_TL() {
 }
 
 void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &candidate) {
-    int num_var = 0, x[g1.n + 1][g2.n + 1], y[g1.e.size()][g2.e.size()];
-    double aim[g1.n * g2.n + g1.e.size() * g2.e.size()];
-    static double cons[MAXV][MAXN];
+    int num_var = 0, num_cons, num_vis2 = 0, x[g1.n + 1][g2.n + 1], y[g1.e.size()][g2.e.size()];
+    double aim0 = 0.0;
     bool vis2[g2.n + 1] = {0};
     memset(x, 0, sizeof(x));
     memset(y, 0, sizeof(y));
@@ -41,6 +40,7 @@ void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &can
         if (candidate.node_state[i] != -1) {
             assert(!vis2[candidate.node_state[i]]);
             vis2[candidate.node_state[i]] = true;
+            ++num_vis2;
         }
     }
     for (int i = candidate.depth + 1; i <= g1.n; ++i) {
@@ -63,15 +63,14 @@ void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &can
             }
         }
     }
-    simplex_solver.clear(num_var);
-    for (int i = 0; i <= num_var; ++i) aim[i] = 0;
+    Simplex simplex(num_var, (g1.n - candidate.depth) + (g2.n - num_vis2) + (int) g1.e.size() * g2.n);
     for (int i = 1; i <= g1.n; ++i) {
         for (int j = 1; j <= g2.n; ++j) {
             double cost = (double) (2 * cost_ins_node - node_sub_cost(i, j));
             if (x[i][j]) {
-                aim[x[i][j]] = cost;
+                simplex.a[0][x[i][j]] = cost;
             } else if (X_IS_ONE(i, j)) {
-                aim[0] += cost;
+                aim0 += cost;
             }
         }
     }
@@ -79,63 +78,60 @@ void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &can
         for (int j = 0; j < g2.e.size(); ++j) {
             double cost = (double) (2 * cost_ins_edge - edge_sub_cost(i, j));
             if (y[i][j] > 0) {
-                aim[y[i][j]] = cost;
+                simplex.a[0][y[i][j]] = cost;
             } else if (y[i][j] == -1) {
-                aim[0] += cost;
+                aim0 += cost;
             }
         }
     }
-    simplex_solver.setmaximal(aim);
+    num_cons = num_var;
     for (int i = candidate.depth + 1; i <= g1.n; ++i) {
-        for (int j = 0; j <= num_var; ++j) cons[0][j] = 0;
+        ++num_cons;
         for (int j = 1; j <= g2.n; ++j) {
             if (x[i][j]) {
-                cons[0][x[i][j]] = 1;
+                simplex.a[num_cons][x[i][j]] = -1;
             }
         }
-        simplex_solver.setcondition(cons[0], 1);
+        simplex.a[num_cons][0] = 1;
     }
     for (int j = 1; j <= g2.n; ++j) {
         if (vis2[j]) continue;
-        for (int i = 0; i <= num_var; ++i) cons[0][i] = 0;
+        ++num_cons;
         for (int i = candidate.depth + 1; i <= g1.n; ++i) {
             if (x[i][j]) {
-                cons[0][x[i][j]] = 1;
+                simplex.a[num_cons][x[i][j]] = -1;
             }
         }
-        simplex_solver.setcondition(cons[0], 1);
+        simplex.a[num_cons][0] = 1;
     }
     for (int i = 0; i < g1.e.size(); ++i) {
-        for (int k = 1; k <= g2.n; ++k) {
-            for (int l = 0; l <= num_var; ++l) cons[k][l] = 0;
-        }
         for (int j = 0; j < g2.e.size(); ++j) {
-            if (y[i][j]>0) {
-                cons[g2.e[j].x][y[i][j]] += 1;
-                cons[g2.e[j].y][y[i][j]] += 1;
-            } else if (y[i][j]==-1) {
-                cons[g2.e[j].x][0] -= 1;
-                cons[g2.e[j].y][0] -= 1;
+            if (y[i][j] > 0) {
+                simplex.a[num_cons + g2.e[j].x][y[i][j]] -= 1;
+                simplex.a[num_cons + g2.e[j].y][y[i][j]] -= 1;
+            } else if (y[i][j] == -1) {
+                simplex.a[num_cons + g2.e[j].x][0] -= 1;
+                simplex.a[num_cons + g2.e[j].y][0] -= 1;
             }
         }
         for (int k = 1; k <= g2.n; ++k) {
             if (x[g1.e[i].x][k]) {
-                cons[k][x[g1.e[i].x][k]] -= 1;
+                simplex.a[num_cons + k][x[g1.e[i].x][k]] += 1;
             } else if (X_IS_ONE(g1.e[i].x, k)) {
-                cons[k][0] += 1;
+                simplex.a[num_cons + k][0] += 1;
             }
             if (x[g1.e[i].y][k]) {
-                cons[k][x[g1.e[i].y][k]] -= 1;
+                simplex.a[num_cons + k][x[g1.e[i].y][k]] += 1;
             } else if (X_IS_ONE(g1.e[i].y, k)) {
-                cons[k][0] += 1;
+                simplex.a[num_cons + k][0] += 1;
             }
-            simplex_solver.setcondition(cons[k], cons[k][0]);
         }
+        num_cons += g2.n;
     }
-    candidate.result = simplex_solver.getresult();
+    candidate.result = simplex.getresult();
     assert(candidate.result != UNBOUNDED);
     if (candidate.result != INFEASIBLE) {
-        candidate.value = -simplex_solver.get_answer() - aim[0] + other_costs();
+        candidate.value = -simplex.get_answer() - aim0 + other_costs();
     }
 }
 
