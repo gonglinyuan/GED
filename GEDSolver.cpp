@@ -5,7 +5,6 @@
 #include "GEDSolver.h"
 
 #include <cassert>
-#include <cmath>
 
 void my_pause() {
     int k1;
@@ -29,96 +28,105 @@ int GEDSolver::check_TL() {
 }
 
 void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &candidate) {
-    // printf("calculate lower bound\n");
-    static int x[MAXV][MAXV], y[MAXE][MAXE], used[MAXV];
-    static double aim[MAXN], cons[MAXV][MAXN];
-    static int init_value_x[MAXV][MAXV];
-    int total_var = 0;
-    memset(used, 0x00, sizeof used);
-    memset(x, 0xff, sizeof x);
-    memset(y, 0xff, sizeof y);
-    memset(init_value_x, 0x00, sizeof init_value_x);
-    for (int i = 1; i <= candidate.depth; ++i)
+    int num_var = 0, x[g1.n + 1][g2.n + 1], y[g1.e.size()][g2.e.size()];
+    double aim[g1.n * g2.n + g1.e.size() * g2.e.size()];
+    static double cons[MAXV][MAXN];
+    bool vis2[g2.n + 1] = {0};
+    memset(x, 0, sizeof(x));
+    memset(y, 0, sizeof(y));
+#define X_IS_ONE(i, j) (((i) <= candidate.depth) && (candidate.node_state[(i)] == (j)))
+#define X_UNKNOWN(i, j) (((i) > candidate.depth) && !vis2[(j)])
+#define X_NOT_ZERO(i, j) (X_IS_ONE(i, j) || X_UNKNOWN(i, j))
+    for (int i = 1; i <= candidate.depth; ++i) {
         if (candidate.node_state[i] != -1) {
-            assert(used[candidate.node_state[i]] == 0);
-            used[candidate.node_state[i]] = 1;
-            init_value_x[i][candidate.node_state[i]] = 1;
+            assert(!vis2[candidate.node_state[i]]);
+            vis2[candidate.node_state[i]] = true;
         }
-
+    }
     for (int i = candidate.depth + 1; i <= g1.n; ++i) {
-        for (int j = 1; j <= g2.n; ++j)
-            if (used[j] == 0) x[i][j] = ++total_var;
-    }
-    for (int i = 0; i < g1.e.size(); ++i) {
-        for (int j = 0; j < g2.e.size(); ++j) y[i][j] = ++total_var;
-    }
-
-    simplex_solver.clear(total_var);
-    for (int i = 0; i <= total_var; ++i) aim[i] = 0;
-
-    for (int i = 1; i <= g1.n; ++i) {
         for (int j = 1; j <= g2.n; ++j) {
-            if (x[i][j] == -1) {
-                aim[0] += init_value_x[i][j] * (2 * cost_ins_node - node_sub_cost(i, j));
-            } else aim[x[i][j]] = 2 * cost_ins_node - node_sub_cost(i, j);
+            if (!vis2[j]) {
+                x[i][j] = ++num_var;
+            }
         }
     }
     for (int i = 0; i < g1.e.size(); ++i) {
         for (int j = 0; j < g2.e.size(); ++j) {
-            aim[y[i][j]] = 2.0 * cost_ins_edge - 1.0 * edge_sub_cost(i, j);
+            if ((X_NOT_ZERO(g1.e[i].x, g2.e[j].x) && X_NOT_ZERO(g1.e[i].y, g2.e[j].y)) ||
+                (X_NOT_ZERO(g1.e[i].x, g2.e[j].y) && X_NOT_ZERO(g1.e[i].y, g2.e[j].x))) {
+                y[i][j] = ++num_var;
+            }
         }
     }
-    // printf("%lf\n",aim[0]);
-    for (int i = candidate.depth + 1; i <= g1.n; ++i) {
-        for (int idx = 0; idx <= total_var; ++idx) cons[0][idx] = 0;
+    simplex_solver.clear(num_var);
+    for (int i = 0; i <= num_var; ++i) aim[i] = 0;
+    for (int i = 1; i <= g1.n; ++i) {
         for (int j = 1; j <= g2.n; ++j) {
-            if (x[i][j] != -1) cons[0][x[i][j]] = 1;
-            else
-                assert(init_value_x[i][j] == 0);
+            double cost = (double) (2 * cost_ins_node - node_sub_cost(i, j));
+            if (x[i][j]) {
+                aim[x[i][j]] = cost;
+            } else if (X_IS_ONE(i, j)) {
+                aim[0] += cost;
+            }
+        }
+    }
+    for (int i = 0; i < g1.e.size(); ++i) {
+        for (int j = 0; j < g2.e.size(); ++j) {
+            if (y[i][j]) {
+                double cost = (double) (2 * cost_ins_edge - edge_sub_cost(i, j));
+                aim[y[i][j]] = cost;
+            }
+        }
+    }
+    simplex_solver.setmaximal(aim);
+    for (int i = candidate.depth + 1; i <= g1.n; ++i) {
+        for (int j = 0; j <= num_var; ++j) cons[0][j] = 0;
+        for (int j = 1; j <= g2.n; ++j) {
+            if (x[i][j]) {
+                cons[0][x[i][j]] = 1;
+            }
         }
         simplex_solver.setcondition(cons[0], 1);
     }
     for (int j = 1; j <= g2.n; ++j) {
-        if (used[j]) continue;
-        for (int idx = 0; idx <= total_var; ++idx) cons[0][idx] = 0;
-        for (int i = 1; i <= g1.n; ++i) {
-            if (x[i][j] != -1) cons[0][x[i][j]] = 1;
+        if (vis2[j]) continue;
+        for (int i = 0; i <= num_var; ++i) cons[0][i] = 0;
+        for (int i = candidate.depth + 1; i <= g1.n; ++i) {
+            if (x[i][j]) {
+                cons[0][x[i][j]] = 1;
+            }
         }
         simplex_solver.setcondition(cons[0], 1);
     }
     for (int i = 0; i < g1.e.size(); ++i) {
-        for (int j = 1; j <= g2.n; ++j)
-            for (int idx = 0; idx <= total_var; ++idx) {
-                cons[j][idx] = 0;
-            }
+        for (int k = 1; k <= g2.n; ++k) {
+            for (int l = 0; l <= num_var; ++l) cons[k][l] = 0;
+        }
         for (int j = 0; j < g2.e.size(); ++j) {
-            cons[g2.e[j].x][y[i][j]] += 1;
-            cons[g2.e[j].y][y[i][j]] += 1;
+            if (y[i][j]) {
+                cons[g2.e[j].x][y[i][j]] += 1;
+                cons[g2.e[j].y][y[i][j]] += 1;
+            }
         }
         for (int k = 1; k <= g2.n; ++k) {
-            if (x[g1.e[i].x][k] != -1) {
+            if (x[g1.e[i].x][k]) {
                 cons[k][x[g1.e[i].x][k]] -= 1;
-            } else cons[k][0] += init_value_x[g1.e[i].x][k];
-            if (x[g1.e[i].y][k] != -1) {
+            } else if (X_IS_ONE(g1.e[i].x, k)) {
+                cons[k][0] += 1;
+            }
+            if (x[g1.e[i].y][k]) {
                 cons[k][x[g1.e[i].y][k]] -= 1;
-            } else cons[k][0] += init_value_x[g1.e[i].y][k];
+            } else if (X_IS_ONE(g1.e[i].y, k)) {
+                cons[k][0] += 1;
+            }
             simplex_solver.setcondition(cons[k], cons[k][0]);
         }
     }
-
-    simplex_solver.setmaximal(aim);
-    // printf("current solve\n"); simplex_solver.print();
     candidate.result = simplex_solver.getresult();
     assert(candidate.result != UNBOUNDED);
     if (candidate.result != INFEASIBLE) {
-        // printf("%lf %lf %d\n", simplex_solver.get_answer(), aim[0], other_costs());
         candidate.value = -simplex_solver.get_answer() - aim[0] + other_costs();
     }
-
-    //printf("calculate value for candidate\n");
-    //candidate.print();
-    //double *way = simplex_solver.get_way();
-    //for (int i = 1; i <= total_var; ++i) printf("%.3lf ",way[i]); puts("");
 }
 
 void GEDSolver::get_final_value_for_candidate(GEDSolver::candidate_solution &candidate) {
@@ -215,7 +223,7 @@ void GEDSolver::solve(int width) {
         std::sort(list[next_list].begin(), list[next_list].end());
         //for (auto k: list[next_list]) k.print();
         //my_pause();
-        list[next_list].resize(std::min(list[next_list].size(), (size_t)width));
+        list[next_list].resize(std::min(list[next_list].size(), (size_t) width));
         now_list = next_list;
     }
     if (list[now_list].size() == 0) return;
