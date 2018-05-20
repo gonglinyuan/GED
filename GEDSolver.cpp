@@ -11,11 +11,11 @@ void my_pause() {
     scanf("%d", &k1);
 }
 
-int GEDSolver::edge_sub_cost(int i, int j) {
+int GEDSolver::edge_sub_cost(int i, int j) const {
     return g1.e[i].type == g2.e[j].type ? 0 : cost_sub_edge;
 }
 
-int GEDSolver::node_sub_cost(int i, int j) {
+int GEDSolver::node_sub_cost(int i, int j) const {
     return g1.label[i] == g2.label[j] ? 0 : cost_sub_node;
 }
 
@@ -27,7 +27,7 @@ int GEDSolver::check_TL() {
     return (clock() - start) / CLOCKS_PER_SEC <= time_limit - 0.5;
 }
 
-void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &candidate) {
+void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &candidate) const {
     int num_var = 0, num_cons, num_vis2 = 0, x[g1.n + 1][g2.n + 1], y[g1.e.size()][g2.e.size()];
     double aim0 = 0.0;
     bool vis2[g2.n + 1] = {0};

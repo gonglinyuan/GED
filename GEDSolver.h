@@ -50,13 +50,13 @@ class GEDSolver {
 
     int check_TL();
 
-    int node_sub_cost(int i, int j);
+    int node_sub_cost(int i, int j) const;
 
-    int edge_sub_cost(int i, int j);
+    int edge_sub_cost(int i, int j) const;
 
     int other_costs() const;
 
-    void get_lower_bound_for_candidate(candidate_solution &candidate);
+    void get_lower_bound_for_candidate(candidate_solution &candidate) const;
 
     void get_final_value_for_candidate(candidate_solution &candidate);
 
