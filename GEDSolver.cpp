@@ -135,25 +135,20 @@ void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &can
     }
 }
 
-void GEDSolver::get_final_value_for_candidate(GEDSolver::candidate_solution &candidate) {
-    // printf("get final value\n");
-    // candidate.print();
-    static int used_node[MAXV], ans, used_edge[MAXE];
-    memset(used_node, 0x00, sizeof used_node);
-    memset(used_edge, 0x00, sizeof used_edge);
-    ans = 0;
+void GEDSolver::get_final_value_for_candidate(GEDSolver::candidate_solution &candidate) const {
+    int ans = 0;
+    bool used_node[g2.n + 1] = {0}, used_edge[g2.e.size()] = {0};
     for (int i = 1; i <= g1.n; ++i) {
         if (candidate.node_state[i] == -1) {
             ans += cost_ins_node;
         } else {
-            assert(used_node[candidate.node_state[i]] == 0);
-            used_node[candidate.node_state[i]] = 1;
-            if (g1.label[i] != g2.label[candidate.node_state[i]])
-                ans += cost_sub_node;
+            assert(!used_node[candidate.node_state[i]]);
+            used_node[candidate.node_state[i]] = true;
+            if (g1.label[i] != g2.label[candidate.node_state[i]]) ans += cost_sub_node;
         }
     }
     for (int i = 1; i <= g2.n; ++i)
-        if (used_node[i] == 0) ans += cost_ins_node;
+        if (!used_node[i]) ans += cost_ins_node;
     for (int i = 0; i < g1.e.size(); ++i) {
         auto edge = g1.e[i];
         int node1 = candidate.node_state[edge.x];
@@ -162,19 +157,19 @@ void GEDSolver::get_final_value_for_candidate(GEDSolver::candidate_solution &can
             ans += cost_ins_edge;
             continue;
         }
-        int flag = 0;
+        bool flag = true;
         for (int j = 0; j < g2.e.size(); ++j) {
             if ((g2.e[j].x == node1 && g2.e[j].y == node2) || (g2.e[j].y == node1 && g2.e[j].x == node2)) {
-                used_edge[j] = 1;
+                used_edge[j] = true;
                 ans += edge_sub_cost(i, j);
-                flag = 1;
+                flag = false;
             }
         }
-        if (flag == 0) ans += cost_ins_edge;
+        if (flag) ans += cost_ins_edge;
     }
-    for (int i = 0; i < g2.e.size(); ++i)
-        if (used_edge[i] == 0) ans += cost_ins_edge;
-
+    for (int i = 0; i < g2.e.size(); ++i) {
+        if (!used_edge[i]) ans += cost_ins_edge;
+    }
     candidate.value = ans;
 }
 

@@ -58,7 +58,7 @@ class GEDSolver {
 
     void get_lower_bound_for_candidate(candidate_solution &candidate) const;
 
-    void get_final_value_for_candidate(candidate_solution &candidate);
+    void get_final_value_for_candidate(candidate_solution &candidate) const;
 
     void solve(int width);
 
