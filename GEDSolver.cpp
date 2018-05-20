@@ -54,7 +54,12 @@ void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &can
         for (int j = 0; j < g2.e.size(); ++j) {
             if ((X_NOT_ZERO(g1.e[i].x, g2.e[j].x) && X_NOT_ZERO(g1.e[i].y, g2.e[j].y)) ||
                 (X_NOT_ZERO(g1.e[i].x, g2.e[j].y) && X_NOT_ZERO(g1.e[i].y, g2.e[j].x))) {
-                y[i][j] = ++num_var;
+                if ((X_IS_ONE(g1.e[i].x, g2.e[j].x) && X_IS_ONE(g1.e[i].y, g2.e[j].y)) ||
+                    (X_IS_ONE(g1.e[i].x, g2.e[j].y) && X_IS_ONE(g1.e[i].y, g2.e[j].x))) {
+                    y[i][j] = -1;
+                } else {
+                    y[i][j] = ++num_var;
+                }
             }
         }
     }
@@ -72,9 +77,11 @@ void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &can
     }
     for (int i = 0; i < g1.e.size(); ++i) {
         for (int j = 0; j < g2.e.size(); ++j) {
-            if (y[i][j]) {
-                double cost = (double) (2 * cost_ins_edge - edge_sub_cost(i, j));
+            double cost = (double) (2 * cost_ins_edge - edge_sub_cost(i, j));
+            if (y[i][j] > 0) {
                 aim[y[i][j]] = cost;
+            } else if (y[i][j] == -1) {
+                aim[0] += cost;
             }
         }
     }
@@ -103,9 +110,12 @@ void GEDSolver::get_lower_bound_for_candidate(GEDSolver::candidate_solution &can
             for (int l = 0; l <= num_var; ++l) cons[k][l] = 0;
         }
         for (int j = 0; j < g2.e.size(); ++j) {
-            if (y[i][j]) {
+            if (y[i][j]>0) {
                 cons[g2.e[j].x][y[i][j]] += 1;
                 cons[g2.e[j].y][y[i][j]] += 1;
+            } else if (y[i][j]==-1) {
+                cons[g2.e[j].x][0] -= 1;
+                cons[g2.e[j].y][0] -= 1;
             }
         }
         for (int k = 1; k <= g2.n; ++k) {
