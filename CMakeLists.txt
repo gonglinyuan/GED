@@ -13,3 +13,5 @@ target_include_directories(GED PRIVATE)
 #
 #add_executable(GEDSolver_test GEDSolver_test.cpp GEDSolver.h GEDSolver.cpp Graph.h Graph.cpp
 #        Simplex.h Simplex.cpp)
+
+add_executable(TreeSolver_test TreeSolver_test.cpp TreeSolver.cpp TreeSolver.h)
