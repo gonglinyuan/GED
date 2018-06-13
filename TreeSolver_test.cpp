@@ -104,7 +104,7 @@ void check() {
     t1 = readTree(); n = t1.n;
     t2 = readTree(); m = t2.n;
     TreeSolver solver(t1, t2);
-    int ans1 = solver.solve();
+    int ans1 = solver.solve().first;
     ans = 0;
     memset(isUsed, 0x00, sizeof isUsed);
     force(1);

@@ -23,16 +23,23 @@ public:
     int label[KMaxTreeNode];
 
     Tree(Graph graph);
-    Tree() {};
+    Tree();
 };
 
+const int KMaxD = 5;
 class TreeSolver {
     Tree t1, t2;
     int** dp;
     int n, m;
+    int perm[KMaxTreeNode];
+    int f[KMaxD + 3][1 << KMaxD];
+
 
     int getValue(int loc1, int loc2);
     int getBestMatch(std::vector<int> childEdge1, std::vector<int> childEdge2);
+    void getBestMatchWay(std::vector<int> childEdge1, std::vector<int> childEdge2);
+    void getPermutation(int loc1, int loc2);
+    void checkSolution(int ans);
 
 public:
     TreeSolver(Tree _t1, Tree _t2);
@@ -46,5 +53,5 @@ public:
         }
     }
 
-    int solve();
+    std::pair<int, int*> solve();
 };

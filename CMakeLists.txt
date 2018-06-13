@@ -15,3 +15,5 @@ target_include_directories(GED PRIVATE)
 #        Simplex.h Simplex.cpp)
 
 add_executable(TreeSolver_test TreeSolver_test.cpp TreeSolver.cpp TreeSolver.h)
+
+add_library(GraphTreeSolver GraphTreeSolver.cpp GraphTreeSolver.h TreeSolver.cpp TreeSolver.h)
