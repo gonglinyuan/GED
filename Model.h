@@ -25,6 +25,7 @@ public:
 
     std::pair<int, std::vector<int> > solve() const;
     std::pair<int, std::vector<int> > better_solve() const;
+    std::pair<int, std::vector<int> > tree_solve() const;
 
     int check_ans(std::vector<int> perm) const;
 

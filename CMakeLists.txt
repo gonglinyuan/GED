@@ -4,7 +4,8 @@ project(GED)
 set(CMAKE_CXX_STANDARD 11)
 
 add_executable(GED main.cpp Graph.cpp Graph.h Model.cpp Model.h main.h IPSolver.h
-        IPSolver.cpp Simplex.cpp Simplex.h GEDSolver.cpp GEDSolver.h)
+        IPSolver.cpp Simplex.cpp Simplex.h GEDSolver.cpp GEDSolver.h GraphTreeSolver.cpp GraphTreeSolver.h
+        TreeSolver.h TreeSolver.cpp)
 target_include_directories(GED PRIVATE)
 
 #add_executable(IPsolver_test IPsolver_test.cpp IPSolver.cpp IPSolver.h Simplex.cpp Simplex.h)
@@ -16,4 +17,5 @@ target_include_directories(GED PRIVATE)
 
 add_executable(TreeSolver_test TreeSolver_test.cpp TreeSolver.cpp TreeSolver.h)
 
-add_library(GraphTreeSolver GraphTreeSolver.cpp GraphTreeSolver.h TreeSolver.cpp TreeSolver.h)
+add_executable(GraphTreeSolver_test GraphTreeSolver_test.cpp GraphTreeSolver.cpp GraphTreeSolver.h
+        TreeSolver.cpp TreeSolver.h Graph.cpp Graph.h)

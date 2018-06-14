@@ -7,6 +7,7 @@
 #include "Model.h"
 #include "IPSolver.h"
 #include "GEDSolver.h"
+#include "GraphTreeSolver.h"
 
 using std::vector;
 using std::to_string;
@@ -22,6 +23,19 @@ pair<int, vector<int> > Model::better_solve() const {
     vector<int> ans;
     for (int i = 1; i <= g1.n; ++i) ans.push_back(way[i]);
     return make_pair(1, ans);
+}
+
+pair<int, vector<int> > Model::tree_solve() const {
+    GraphTreeSolver solver(g1, g2, c_edge_ins, c_edge_sub, c_node_ins, c_node_sub, 10);
+    solver.solve();
+    pair<int, int*> result = solver.getans();
+    vector<int> perm(g1.n);
+    for (int i = 1; i <= g1.n; ++i) {
+        if (result.second[i] == 0) perm[i - 1] = -1; else perm[i - 1] = result.second[i];
+    }
+    printf("%d %d\n", result.first, check_ans(perm));
+    assert(check_ans(perm) == result.first);
+    return make_pair(1, perm);
 }
 
 pair<int, vector<int>> Model::solve() const {

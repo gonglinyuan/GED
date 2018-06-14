@@ -5,9 +5,12 @@
 #include "GraphTreeSolver.h"
 
 #include <cassert>
+#include <set>
+#include <random>
 
 using std::pair;
 using std::make_pair;
+using std::set;
 using std::vector;
 
 pair<Tree, vector<int> > deleteNodeFromTree(int *isUsed, Tree tree) {
@@ -76,7 +79,9 @@ vector<int> GraphTreeSolver::solveTree(Tree t1, Tree t2) {
     return perm;
 }
 
-int GraphTreeSolver::calculateCost(const std::vector<int> &perm) {
+int GraphTreeSolver::calculateCost(int* perm) {
+    // printf("calculate\n");
+    // for (int i = 1; i <= g1.n; ++i) printf("%d ", perm[i]); puts("");
     int total_cost = 0;
     static int isUsed[KMaxTreeNode];
     static int edgeTag[KMaxTreeNode][KMaxTreeNode] = {0}, sign = 0, edgeId[KMaxTreeNode][KMaxTreeNode];
@@ -94,14 +99,17 @@ int GraphTreeSolver::calculateCost(const std::vector<int> &perm) {
         if (isUsed[i] == 0) total_cost += addNode;
     ++sign;
     for (int i = 0; i < g2.e.size(); ++i) {
-        int u = g2.e.size(), v = g2.e.size();
+        int u = g2.e[i].x, v = g2.e[i].y;
         assert(edgeTag[u][v] != sign);
         edgeTag[u][v] = edgeTag[v][u] = sign;
         edgeId[u][v] = edgeId[v][u] = i;
     }
     for (auto edge: g1.e) {
         int u = edge.x, v = edge.y;
-        if (perm[u] == 0 || perm[v] == 0) total_cost += addEdge;
+        if (perm[u] == 0 || perm[v] == 0){
+            total_cost += addEdge;
+            continue;
+        }
         if (edgeTag[perm[u]][perm[v]] != sign) {
             total_cost += addEdge;
             continue;
@@ -117,18 +125,90 @@ int GraphTreeSolver::calculateCost(const std::vector<int> &perm) {
     return total_cost;
 }
 
+void GraphTreeSolver::mutate(const GraphTreeSolver::CandidateSolution current) {
+    set<pair<int,int> > usedMutation;
+    int isUsed[KMaxKeep];
+    memset(isUsed, 0x00, sizeof isUsed);
+    int n = g1.n, m = g2.n;
+    for (int i = 1; i <= n; ++i) if (current.perm[i]) isUsed[current.perm[i]] = 1;
+    GraphTreeSolver::CandidateSolution now = current;
+    /*printf("mutate\n");
+    for (int i = 1; i <= n; ++i) printf("%d ", current.perm[i]);
+    puts("");
+    for (int i = 1; i <= m; ++i) printf("%d", isUsed[i]);
+    puts("");*/
+    for (int i = 0; i < KMutateNum; ++i) {
+        for (int lim = 0; lim < 10; ++lim) {
+            int u = rand() % n + 1;
+            int v = rand() % (n + m + 1) - n;
+            if (usedMutation.find(make_pair(u, v)) != usedMutation.end()) continue;
+            usedMutation.insert(make_pair(u, v));
+            if (v < 0) {
+                v = -v;
+                if (current.perm[u] == current.perm[v]) continue;
+                now = current;
+                std::swap(now.perm[u], now.perm[v]);
+                now.cost = calculateCost(now.perm);
+                candidate.emplace_back(now);
+                break;
+            } else {
+                if (isUsed[v] || current.perm[u] == v) continue;
+                now = current;
+                now.perm[u] = v;
+                now.cost = calculateCost(now.perm);
+                candidate.emplace_back(now);
+                break;
+            }
+        }
+    }
+}
+
+GraphTreeSolver::CandidateSolution GraphTreeSolver::drawFromCandidate() {
+    double total = 0;
+    int flag = 0;
+    static const double eps = 1e-8;
+    for (const auto& current: candidate)
+        if (current.cost != -1) total += 1.0 / (1 + current.cost), flag = 1;
+    std::uniform_real_distribution<double> distribution(0, total);
+    double drawNumber = distribution(rng);
+    for (auto& current: candidate) {
+        if (current.cost == -1) continue;
+        double currentP = 1.0 / (1 + current.cost);
+        if (drawNumber < currentP + eps) {
+            current.cost = -1;
+            return current;
+        }
+        drawNumber -= currentP;
+    }
+    assert(0);
+}
+
 void GraphTreeSolver::solve() {
+    // g1.print();
+    // g2.print();
     for (int i = 0; i < KMaxKeep; ++i) {
+        // printf("first solve %d\n", i);
         vector<int> result = solveTree(g1, g2);
-        current[i].cost = calculateCost(result);
         for (int j = 1; j <= g1.n; ++j) current[i].perm[j] = result[j];
+        current[i].cost = calculateCost(current[i].perm);
+        // printf("%d\n", current[i].cost);
+        // for (int j = 1; j <= g1.n; ++j) printf("%d ",result[j]); puts("");
     }
     for (int i = 0; i < KMaxKeep; ++i) {
         if (current[i].cost < optimal.cost) {
             optimal = current[i];
         }
     }
-    for (int t = 1; t <= 50; ++ t) {
-        
+    int round = 0;
+    while (checkTL()) {
+        candidate.clear();
+        for (int i = 0; i < KMaxKeep && checkTL(); ++i) mutate(current[i]);
+        // printf("finish mutate");
+        for (const auto& current: candidate) {
+            if (current.cost < optimal.cost) optimal = current;
+        }
+        for (int i = 0; i < KMaxKeep && checkTL(); ++i) {
+            current[i] = drawFromCandidate();
+        }
     }
 }

@@ -69,8 +69,8 @@ Tree::Tree(Graph graph) {
         edgeLabel.push_back(0);
     }
 
-    assert(total_edge == n - 1);
-    for (int i = 1; i <= n; ++i) assert(findFather(father, i) != findFather(father, 1));
+    // assert(total_edge == n - 1);
+    // for (int i = 1; i <= n; ++i) assert(findFather(father, i) != findFather(father, 1));
 }
 
 TreeSolver::TreeSolver(Tree _t1, Tree _t2): t1(_t1), t2(_t2) {
@@ -203,7 +203,7 @@ pair<int, int*> TreeSolver::solve() {
             }
         }
     }
-    for (int i = 1; i <= t1.n; ++i) printf("%d ", perm[i]); puts("");
+    // for (int i = 1; i <= t1.n; ++i) printf("%d ", perm[i]); puts("");
     checkSolution(ans);
     return make_pair(ans, perm);
 }
