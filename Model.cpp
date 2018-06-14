@@ -5,6 +5,7 @@
 #include <cassert>
 #include <iostream>
 #include "Model.h"
+#include "Graph.h"
 #include "IPSolver.h"
 #include "GEDSolver.h"
 #include "GraphTreeSolver.h"
@@ -17,7 +18,7 @@ using std::pair;
 using std::make_pair;
 
 pair<int, vector<int> > Model::better_solve() const {
-    GEDSolver solver(g1, g2, c_node_ins, c_node_sub, c_edge_ins, c_edge_sub, 75);
+    GEDSolver solver(g1, g2, c_node_ins, c_node_sub, c_edge_ins, c_edge_sub, 25);
     solver.calculate_GED();
     int* way=solver.get_way();
     vector<int> ans;
@@ -26,14 +27,20 @@ pair<int, vector<int> > Model::better_solve() const {
 }
 
 pair<int, vector<int> > Model::tree_solve() const {
-    GraphTreeSolver solver(g1, g2, c_edge_ins, c_edge_sub, c_node_ins, c_node_sub, 10);
+    /*puts("g1");
+    g1.print();
+    puts("g2");
+    g2.print();*/
+    GraphTreeSolver solver(g1, g2, c_edge_ins, c_edge_sub, c_node_ins, c_node_sub, 25);
     solver.solve();
     pair<int, int*> result = solver.getans();
     vector<int> perm(g1.n);
     for (int i = 1; i <= g1.n; ++i) {
+        // printf("%d ", result.second[i]);
         if (result.second[i] == 0) perm[i - 1] = -1; else perm[i - 1] = result.second[i];
     }
-    printf("%d %d\n", result.first, check_ans(perm));
+    // puts("");
+    // printf("%d %d\n", result.first, check_ans(perm));
     assert(check_ans(perm) == result.first);
     return make_pair(1, perm);
 }

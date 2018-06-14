@@ -129,7 +129,7 @@ Graph::Graph(const Graph &pre) {
     e = pre.e;
 }
 
-void Graph::print() {
+void Graph::print() const {
     printf("%d %d\n", n, int(e.size()));
     for (int i = 1; i <= n; ++i) printf("%d ", label[i]);
     puts("");

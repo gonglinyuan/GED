@@ -16,9 +16,10 @@
 
 const int KMaxKeep = 50;
 const int KMutateNum = 20;
+const int KKeepFirstNum = 20;
 class GraphTreeSolver {
     Graph g1, g2;
-    int addEdge, subEdge, addNode, subNode, timeLimit;
+    int addEdge, subEdge, addNode, subNode, timeLimit, totalCandidate;
     std::mt19937 rng;
     clock_t start;
 
@@ -31,13 +32,31 @@ class GraphTreeSolver {
             cost = 1000000000;
             memset(perm, 0x00, sizeof perm);
         }
+        int operator < (const CandidateSolution& candidate) const {
+            return cost < candidate.cost;
+        }
+        unsigned long long getHash() const {
+            static const unsigned long long key = 10007;
+            unsigned long long hash = 0;
+            for (int i = 1; i < KMaxTreeNode; ++i) {
+                hash = hash * key + perm[i];
+            }
+            return hash;
+        }
     } optimal, current[KMaxKeep];
     std::vector<CandidateSolution> candidate;
+    std::set<unsigned long long> isCandidate;
 
     std::vector<int> solveTree(Tree t1, Tree t2);
     int calculateCost(int* perm);
-    void mutate(const CandidateSolution candidate);
+    CandidateSolution mutate(const CandidateSolution candidate);
+    void getChild(const CandidateSolution candidate);
+    void getChildNew(const CandidateSolution candidate);
     CandidateSolution drawFromCandidate();
+    CandidateSolution mixTwoCandidate(const CandidateSolution candidate1, const CandidateSolution candidate2);
+    CandidateSolution randomSolution();
+    void getNewCandidate();
+    void insert(const CandidateSolution& currentCandidate);
     bool checkTL() {
         return (clock() - start) / CLOCKS_PER_SEC < timeLimit;
     }

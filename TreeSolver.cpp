@@ -203,7 +203,6 @@ pair<int, int*> TreeSolver::solve() {
             }
         }
     }
-    // for (int i = 1; i <= t1.n; ++i) printf("%d ", perm[i]); puts("");
     checkSolution(ans);
     return make_pair(ans, perm);
 }
