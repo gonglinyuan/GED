@@ -4,6 +4,8 @@
 
 #include <cassert>
 #include <iostream>
+#include <pthread.h>
+
 #include "Model.h"
 #include "Graph.h"
 #include "IPSolver.h"
@@ -26,23 +28,12 @@ pair<int, vector<int> > Model::better_solve() const {
     return make_pair(1, ans);
 }
 
-pair<int, vector<int> > Model::tree_solve() const {
-    /*puts("g1");
-    g1.print();
-    puts("g2");
-    g2.print();*/
+pair<int, vector<int> > Model::tree_solve() {
     GraphTreeSolver solver(g1, g2, c_edge_ins, c_edge_sub, c_node_ins, c_node_sub, 25);
     solver.solve();
-    pair<int, int*> result = solver.getans();
-    vector<int> perm(g1.n);
-    for (int i = 1; i <= g1.n; ++i) {
-        // printf("%d ", result.second[i]);
-        if (result.second[i] == 0) perm[i - 1] = -1; else perm[i - 1] = result.second[i];
-    }
-    // puts("");
-    // printf("%d %d\n", result.first, check_ans(perm));
-    assert(check_ans(perm) == result.first);
-    return make_pair(1, perm);
+    auto result = solver.getans();
+    assert(result.first == check_ans(result.second));
+    return make_pair(1, result.second);
 }
 
 pair<int, vector<int>> Model::solve() const {

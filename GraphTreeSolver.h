@@ -14,10 +14,11 @@
 #include "TreeSolver.h"
 #include "Graph.h"
 
-const int KMaxKeep = 50;
+const int KMaxKeep = 70;
 const int KMutateNum = 20;
-const int KKeepFirstNum = 20;
+const int KKeepFirstNum = 40;
 class GraphTreeSolver {
+public:
     Graph g1, g2;
     int addEdge, subEdge, addNode, subNode, timeLimit, totalCandidate;
     std::mt19937 rng;
@@ -62,17 +63,22 @@ class GraphTreeSolver {
     }
 
 
-public:
     GraphTreeSolver(Graph _g1, Graph _g2, int _addEdge, int _subEdge, int _addNode, int _subNode, int _timeLimit):
             g1(_g1), g2(_g2), addEdge(_addEdge), subEdge(_subEdge), addNode(_addNode), subNode(_subNode) {
         timeLimit = _timeLimit;
         rng.seed(std::random_device()());
         start = clock();
     }
+    GraphTreeSolver() {}
+    ~GraphTreeSolver() {}
 
     void solve();
-    std::pair<int, int*> getans() {
-        return std::make_pair(optimal.cost, optimal.perm);
+    std::pair<int, std::vector<int> > getans() {
+        std::vector<int> ans;
+        for (int i = 1; i <= g1.n; ++i) {
+            if (optimal.perm[i] == 0) ans.push_back(-1); else ans.push_back(optimal.perm[i]);
+        }
+        return std::make_pair(optimal.cost, ans);
     }
 };
 

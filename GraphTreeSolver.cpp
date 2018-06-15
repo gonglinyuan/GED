@@ -156,29 +156,7 @@ GraphTreeSolver::CandidateSolution GraphTreeSolver::mutate(const GraphTreeSolver
 
 GraphTreeSolver::CandidateSolution GraphTreeSolver::mixTwoCandidate(const GraphTreeSolver::CandidateSolution candidate1,
                                                                     const GraphTreeSolver::CandidateSolution candidate2) {
-    static int A[KMaxTreeNode], B[KMaxTreeNode], locA[KMaxTreeNode], locB[KMaxTreeNode];
-    memcpy(A, candidate1.perm, sizeof A);
-    memcpy(B, candidate2.perm, sizeof B);
-    memset(locA, 0x00, sizeof locA);
-    int n = g1.n;
-    int u = rand() % n + 1;
-    for (int i = 1; i <= 100; ++i) if (A[u] == B[u]) u = rand() % n + 1;
-    for (int i = 1; i <= n; ++i) if (i != u) locA[A[i]] = i;
-    while (1) {
-        if (B[u] == 0) {
-            A[u] = B[u];
-            break;
-        }
-        A[u] = B[u];
-        if (locA[A[u]] == 0) break;
-        int ne = locA[A[u]];
-        locA[A[u]] = u;
-        u = ne;
-    }
-    GraphTreeSolver::CandidateSolution result = candidate1;
-    for (int i = 1; i <= n; ++i) result.perm[i] = A[i];
-    result.cost = calculateCost(result.perm);
-    return result;
+    return candidate1;
 }
 
 void GraphTreeSolver::getChildNew(const GraphTreeSolver::CandidateSolution currentCandidate) {
@@ -188,10 +166,10 @@ void GraphTreeSolver::getChildNew(const GraphTreeSolver::CandidateSolution curre
     for (int i = 1; i <= n; ++i) if (currentCandidate.perm[i]) isUsed[currentCandidate.perm[i]] = 1;
     GraphTreeSolver::CandidateSolution now = currentCandidate;
     for (int i = 0; i < KMutateNum; ++i) {
-        if (rand() % 10 == 0) {
+        if (rand() % 10 <= 10) {
             insert(mutate(currentCandidate));
         } else {
-            int u = rand() % KMaxKeep;
+            int u = rand() % totalCandidate;
             insert(mixTwoCandidate(currentCandidate, current[u]));
         }
     }
@@ -262,6 +240,7 @@ void GraphTreeSolver::getNewCandidate() {
         current[i] = drawFromCandidate();
         totalCandidate += 1;
     }
+    assert(totalCandidate <= KMaxKeep);
 }
 
 void GraphTreeSolver::solve() {

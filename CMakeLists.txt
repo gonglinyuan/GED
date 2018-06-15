@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 project(GED)
 
 set(CMAKE_CXX_STANDARD 11)
-add_definitions(-O2)
 
 add_executable(GED main.cpp Graph.cpp Graph.h Model.cpp Model.h main.h IPSolver.h
         IPSolver.cpp Simplex.cpp Simplex.h GEDSolver.cpp GEDSolver.h GraphTreeSolver.cpp GraphTreeSolver.h
@@ -20,3 +19,7 @@ add_executable(TreeSolver_test TreeSolver_test.cpp TreeSolver.cpp TreeSolver.h)
 
 add_executable(GraphTreeSolver_test GraphTreeSolver_test.cpp GraphTreeSolver.cpp GraphTreeSolver.h
         TreeSolver.cpp TreeSolver.h Graph.cpp Graph.h)
+add_definitions(-O2)
+add_definitions(-lpthread)
+find_package(Threads)
+target_link_libraries (${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
