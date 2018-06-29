@@ -10,7 +10,6 @@
 #include <iostream>
 
 #include "TreeSolver.h"
-#include "Graph.h"
 
 using std::pair;
 using std::make_pair;
@@ -32,7 +31,7 @@ Tree::Tree() {
 }
 
 Tree::Tree(Graph graph) {
-    static int father[KMaxTreeNode];
+    int father[KMaxTreeNode];
     n = graph.n;
     for (int i = 1; i <= n; ++i) father[i] = i;
     for (int i = 1; i <= n; ++i) {
@@ -73,10 +72,10 @@ Tree::Tree(Graph graph) {
     // for (int i = 1; i <= n; ++i) assert(findFather(father, i) != findFather(father, 1));
 }
 
-TreeSolver::TreeSolver(Tree _t1, Tree _t2): t1(_t1), t2(_t2) {
+TreeSolver::TreeSolver(Tree _t1, Tree _t2) : t1(_t1), t2(_t2) {
     n = t1.edge.size();
     m = t2.edge.size();
-    dp = new int*[n + 5];
+    dp = new int *[n + 5];
     for (int i = 0; i <= n + 2; ++i) dp[i] = new int[m + 5];
     for (int i = 0; i < n; ++i)
         for (int j = 0; j < m; ++j)
@@ -85,7 +84,7 @@ TreeSolver::TreeSolver(Tree _t1, Tree _t2): t1(_t1), t2(_t2) {
     memset(f, 0x00, sizeof f);
 }
 
-int TreeSolver::getBestMatch(vector<int> childEdge1, vector<int> childEdge2) {
+int TreeSolver::getBestMatch(const vector<int> &childEdge1, const vector<int> &childEdge2) {
     vector<vector<int> > value;
     for (int i = 0; i < childEdge1.size(); ++i) {
         vector<int> current_value;
@@ -132,11 +131,11 @@ int TreeSolver::getValue(int loc1, int loc2) {
     return dp[loc1][loc2];
 }
 
-void TreeSolver::getBestMatchWay(std::vector<int> childEdge1, std::vector<int> childEdge2) {
+void TreeSolver::getBestMatchWay(const vector<int> &childEdge1, const vector<int> &childEdge2) {
     getBestMatch(childEdge1, childEdge2);
     int n = childEdge1.size(), m = childEdge2.size();
     int now = (1 << m) - 1;
-    vector<pair<int,int> > matchPair;
+    vector<pair<int, int> > matchPair;
     for (int i = (n - 1); i >= 0; --i) {
         if (f[i][now] == f[i + 1][now]) {
             continue;
@@ -181,7 +180,7 @@ void TreeSolver::getPermutation(int loc1, int loc2) {
     getBestMatchWay(childEdge1, childEdge2);
 }
 
-pair<int, int*> TreeSolver::solve() {
+pair<int, int *> TreeSolver::solve() {
     int ans = 0;
     /*puts("t1");
     for (int i = 0; i < t1.edge.size(); ++i) printf("%d %d %d %d\n", i, t1.edge[i].first, t1.edge[i].second, t1.edgeLabel[i]);
@@ -207,7 +206,7 @@ pair<int, int*> TreeSolver::solve() {
     return make_pair(ans, perm);
 }
 
-void TreeSolver::checkSolution(int ans) {
+void TreeSolver::checkSolution(int ans) const {
     int n = t1.n;
     int m = t2.n;
     int flag = 0, total_edge = 0;
@@ -223,7 +222,8 @@ void TreeSolver::checkSolution(int ans) {
                 isOccur = 1;
         }
         if (isOccur == 0) {
-            flag = 1; break;
+            flag = 1;
+            break;
         }
     }
     assert(flag == 0);

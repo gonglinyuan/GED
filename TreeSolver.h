@@ -36,10 +36,10 @@ class TreeSolver {
 
 
     int getValue(int loc1, int loc2);
-    int getBestMatch(std::vector<int> childEdge1, std::vector<int> childEdge2);
-    void getBestMatchWay(std::vector<int> childEdge1, std::vector<int> childEdge2);
+    int getBestMatch(const std::vector<int> &childEdge1, const std::vector<int> &childEdge2);
+    void getBestMatchWay(const std::vector<int> &childEdge1, const std::vector<int> &childEdge2);
     void getPermutation(int loc1, int loc2);
-    void checkSolution(int ans);
+    void checkSolution(int ans)const;
 
 public:
     TreeSolver(Tree _t1, Tree _t2);
