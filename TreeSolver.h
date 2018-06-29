@@ -46,10 +46,10 @@ public:
 
     ~TreeSolver() {
         if (dp != nullptr) {
-            for (int i = 0; i <= n; ++i) {
+            for (int i = 0; i <= n + 2; ++i) {
                 if (dp[i] != nullptr) delete[](dp[i]);
             }
-            delete dp;
+            delete[] dp;
         }
     }
 

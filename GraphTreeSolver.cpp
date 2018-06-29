@@ -172,24 +172,24 @@ void GraphTreeSolver::getChildNew(const GraphTreeSolver::CandidateSolution curre
 //    int isUsed[m+ 1] = {0};
 //    for (int i = 1; i <= n; ++i) if (currentCandidate.perm[i]) isUsed[currentCandidate.perm[i]] = 1;
 //    GraphTreeSolver::CandidateSolution now = currentCandidate;
-//    for (int i = 0; i < KMutateNum; ++i) {
-//        if (rand() % 10 <= 10) {
-//            insert(mutate(currentCandidate));
-//        } else {
-//            int u = rand() % totalCandidate;
-//            insert(mixTwoCandidate(currentCandidate, current[u]));
-//        }
-//    }
-    vector<CandidateSolution> sols;
     for (int i = 0; i < KMutateNum; ++i) {
-        CandidateSolution sol = mutate(currentCandidate);
-        sols.push_back(sol);
+        if (rand() % 10 <= 10) {
+            insert(mutate(currentCandidate));
+        } else {
+            int u = rand() % totalCandidate;
+            insert(mixTwoCandidate(currentCandidate, current[u]));
+        }
     }
-    mtx.try_lock();
-    for (const auto &it : sols) {
-        insert(it);
-    }
-    mtx.unlock();
+//    vector<CandidateSolution> sols;
+//    for (int i = 0; i < KMutateNum; ++i) {
+//        CandidateSolution sol = mutate(currentCandidate);
+//        sols.push_back(sol);
+//    }
+//    mtx.try_lock();
+//    for (const auto &it : sols) {
+//        insert(it);
+//    }
+//    mtx.unlock();
 }
 
 void GraphTreeSolver::getChild(const GraphTreeSolver::CandidateSolution current) {
@@ -271,7 +271,7 @@ void GraphTreeSolver::get_all_children(int num) {
             }
         }
     }
-    mtx.try_lock();
+    mtx.lock();
     for (const auto &it : sols) {
         insert(it);
     }
@@ -305,6 +305,7 @@ void GraphTreeSolver::solve() {
         thread1.join();
         thread2.join();
         thread3.join();
+//        printf("%lu\n", candidate.size());
         for (const auto &current: candidate) {
             if (current.cost < optimal.cost) optimal = current;
         }
