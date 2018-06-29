@@ -10,6 +10,8 @@
 #include <set>
 #include <random>
 #include <ctime>
+#include <unordered_set>
+#include <mutex>
 
 #include "TreeSolver.h"
 #include "Graph.h"
@@ -23,6 +25,7 @@ public:
     int addEdge, subEdge, addNode, subNode, timeLimit, totalCandidate;
     std::mt19937 rng;
     clock_t start;
+    std::mutex mtx;
 
     class CandidateSolution {
     public:
@@ -46,7 +49,7 @@ public:
         }
     } optimal, current[KMaxKeep];
     std::vector<CandidateSolution> candidate;
-    std::set<unsigned long long> isCandidate;
+    std::unordered_set<unsigned long long> isCandidate;
 
     std::vector<int> solveTree(Tree t1, Tree t2)const;
     int calculateCost(const int* perm)const;
@@ -80,6 +83,8 @@ public:
         }
         return std::make_pair(optimal.cost, ans);
     }
+
+    void get_all_children(int);
 };
 
 

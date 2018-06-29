@@ -6,12 +6,16 @@
 
 #include <cassert>
 #include <algorithm>
+#include <thread>
 
 using std::pair;
 using std::make_pair;
 using std::set;
 using std::vector;
 using std::max;
+using std::thread;
+using std::bind;
+using std::mutex;
 
 pair<Tree, vector<int> > deleteNodeFromTree(int *isUsed, Tree tree) {
     int id[tree.n + 1] = {0};
@@ -168,14 +172,24 @@ void GraphTreeSolver::getChildNew(const GraphTreeSolver::CandidateSolution curre
 //    int isUsed[m+ 1] = {0};
 //    for (int i = 1; i <= n; ++i) if (currentCandidate.perm[i]) isUsed[currentCandidate.perm[i]] = 1;
 //    GraphTreeSolver::CandidateSolution now = currentCandidate;
+//    for (int i = 0; i < KMutateNum; ++i) {
+//        if (rand() % 10 <= 10) {
+//            insert(mutate(currentCandidate));
+//        } else {
+//            int u = rand() % totalCandidate;
+//            insert(mixTwoCandidate(currentCandidate, current[u]));
+//        }
+//    }
+    vector<CandidateSolution> sols;
     for (int i = 0; i < KMutateNum; ++i) {
-        if (rand() % 10 <= 10) {
-            insert(mutate(currentCandidate));
-        } else {
-            int u = rand() % totalCandidate;
-            insert(mixTwoCandidate(currentCandidate, current[u]));
-        }
+        CandidateSolution sol = mutate(currentCandidate);
+        sols.push_back(sol);
     }
+    mtx.try_lock();
+    for (const auto &it : sols) {
+        insert(it);
+    }
+    mtx.unlock();
 }
 
 void GraphTreeSolver::getChild(const GraphTreeSolver::CandidateSolution current) {
@@ -247,6 +261,23 @@ void GraphTreeSolver::getNewCandidate() {
     assert(totalCandidate <= KMaxKeep);
 }
 
+void GraphTreeSolver::get_all_children(int num) {
+    vector<CandidateSolution> sols;
+    for (int i = 0; i < totalCandidate; ++i) {
+        if (i % 4 == num) {
+            for (int j = 0; j < KMutateNum; ++j) {
+                CandidateSolution sol = mutate(current[i]);
+                sols.push_back(sol);
+            }
+        }
+    }
+    mtx.try_lock();
+    for (const auto &it : sols) {
+        insert(it);
+    }
+    mtx.unlock();
+}
+
 void GraphTreeSolver::solve() {
     isCandidate.clear();
     for (int i = 0; i < KMaxKeep; ++i) {
@@ -265,7 +296,15 @@ void GraphTreeSolver::solve() {
     while (checkTL()) {
         candidate.clear();
         isCandidate.clear();
-        for (int i = 0; i < totalCandidate && checkTL(); ++i) getChildNew(current[i]);
+//        for (int i = 0; i < totalCandidate && checkTL(); ++i) getChildNew(current[i]);
+        thread thread0(bind(&GraphTreeSolver::get_all_children, this, 0));
+        thread thread1(bind(&GraphTreeSolver::get_all_children, this, 1));
+        thread thread2(bind(&GraphTreeSolver::get_all_children, this, 2));
+        thread thread3(bind(&GraphTreeSolver::get_all_children, this, 3));
+        thread0.join();
+        thread1.join();
+        thread2.join();
+        thread3.join();
         for (const auto &current: candidate) {
             if (current.cost < optimal.cost) optimal = current;
         }
