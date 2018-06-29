@@ -48,17 +48,17 @@ public:
     std::vector<CandidateSolution> candidate;
     std::set<unsigned long long> isCandidate;
 
-    std::vector<int> solveTree(Tree t1, Tree t2);
-    int calculateCost(int* perm);
-    CandidateSolution mutate(const CandidateSolution candidate);
+    std::vector<int> solveTree(Tree t1, Tree t2)const;
+    int calculateCost(const int* perm)const;
+    CandidateSolution mutate(const CandidateSolution candidate)const;
     void getChild(const CandidateSolution candidate);
     void getChildNew(const CandidateSolution candidate);
     CandidateSolution drawFromCandidate();
-    CandidateSolution mixTwoCandidate(const CandidateSolution candidate1, const CandidateSolution candidate2);
-    CandidateSolution randomSolution();
+    CandidateSolution mixTwoCandidate(const CandidateSolution candidate1, const CandidateSolution candidate2)const;
+    CandidateSolution randomSolution()const;
     void getNewCandidate();
     void insert(const CandidateSolution& currentCandidate);
-    bool checkTL() {
+    bool checkTL()const {
         return (clock() - start) / CLOCKS_PER_SEC < timeLimit;
     }
 
@@ -73,7 +73,7 @@ public:
     ~GraphTreeSolver() {}
 
     void solve();
-    std::pair<int, std::vector<int> > getans() {
+    std::pair<int, std::vector<int> > getans()const {
         std::vector<int> ans;
         for (int i = 1; i <= g1.n; ++i) {
             if (optimal.perm[i] == 0) ans.push_back(-1); else ans.push_back(optimal.perm[i]);

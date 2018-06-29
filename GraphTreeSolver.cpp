@@ -5,18 +5,16 @@
 #include "GraphTreeSolver.h"
 
 #include <cassert>
-#include <set>
-#include <random>
 #include <algorithm>
 
 using std::pair;
 using std::make_pair;
 using std::set;
 using std::vector;
+using std::max;
 
 pair<Tree, vector<int> > deleteNodeFromTree(int *isUsed, Tree tree) {
-    static int id[KMaxTreeNode];
-    memset(id, 0x00, sizeof id);
+    int id[tree.n + 1] = {0};
     int remNodeNumber = 0;
     for (int i = 1; i <= tree.n; ++i) {
         if (isUsed[i] == 0) {
@@ -54,13 +52,13 @@ pair<Tree, vector<int> > deleteNodeFromTree(int *isUsed, Tree tree) {
     return make_pair(remTree, preid);
 }
 
-vector<int> GraphTreeSolver::solveTree(Tree t1, Tree t2) {
-    static int isUsed[KMaxTreeNode];
+vector<int> GraphTreeSolver::solveTree(Tree t1, Tree t2) const {
     int n = t1.n;
     int m = t2.n;
+    int isUsed[max(n, m) + 1];
     vector<int> perm(n + 1);
     for (int i = 1; i <= n; ++i) perm[i] = 0;
-    while (1) {
+    while (true) {
         memset(isUsed, 0x00, sizeof isUsed);
         for (int i = 1; i <= n; ++i) if (perm[i]) isUsed[i] = 1;
         pair<Tree, vector<int> > remTree1 = deleteNodeFromTree(isUsed, t1);
@@ -83,13 +81,16 @@ vector<int> GraphTreeSolver::solveTree(Tree t1, Tree t2) {
     return perm;
 }
 
-int GraphTreeSolver::calculateCost(int* perm) {
+int GraphTreeSolver::calculateCost(const int *perm) const {
     int total_cost = 0;
-    static int isUsed[KMaxTreeNode];
-    static int edgeTag[KMaxTreeNode][KMaxTreeNode] = {0}, sign = 0, edgeId[KMaxTreeNode][KMaxTreeNode];
-    memset(isUsed, 0x00, sizeof isUsed);
+//    static int isUsed[KMaxTreeNode];
+//    static int edgeTag[KMaxTreeNode][KMaxTreeNode] = {0}, edgeId[KMaxTreeNode][KMaxTreeNode];
+//    memset(isUsed, 0x00, sizeof isUsed);
     int n = g1.n;
     int m = g2.n;
+    int isUsed[m + 1] = {0};
+    int sign = 0;
+    int edgeTag[m + 1][m + 1] = {0}, edgeId[m + 1][m + 1];
     for (int i = 1; i <= n; ++i) {
         if (perm[i]) {
             assert(isUsed[perm[i]] == 0);
@@ -108,7 +109,7 @@ int GraphTreeSolver::calculateCost(int* perm) {
     }
     for (auto edge: g1.e) {
         int u = edge.x, v = edge.y;
-        if (perm[u] == 0 || perm[v] == 0){
+        if (perm[u] == 0 || perm[v] == 0) {
             total_cost += addEdge;
             continue;
         }
@@ -127,14 +128,15 @@ int GraphTreeSolver::calculateCost(int* perm) {
     return total_cost;
 }
 
-GraphTreeSolver::CandidateSolution GraphTreeSolver::mutate(const GraphTreeSolver::CandidateSolution current) {
+GraphTreeSolver::CandidateSolution GraphTreeSolver::mutate(const GraphTreeSolver::CandidateSolution current) const {
     GraphTreeSolver::CandidateSolution now = current;
     int n = g1.n;
     int m = g2.n;
-    static int isUsed[KMaxTreeNode];
-    memset(isUsed, 0x00, sizeof isUsed);
+//    static int isUsed[KMaxTreeNode];
+//    memset(isUsed, 0x00, sizeof isUsed);
+    int isUsed[m + 1] = {0};
     for (int i = 1; i <= n; ++i) isUsed[current.perm[i]] = 1;
-    while (1) {
+    while (true) {
         int u = rand() % n + 1;
         int v = rand() % (n + m + 1) - n;
         if (v < 0) {
@@ -155,16 +157,17 @@ GraphTreeSolver::CandidateSolution GraphTreeSolver::mutate(const GraphTreeSolver
 }
 
 GraphTreeSolver::CandidateSolution GraphTreeSolver::mixTwoCandidate(const GraphTreeSolver::CandidateSolution candidate1,
-                                                                    const GraphTreeSolver::CandidateSolution candidate2) {
+                                                                    const GraphTreeSolver::CandidateSolution candidate2) const {
     return candidate1;
 }
 
 void GraphTreeSolver::getChildNew(const GraphTreeSolver::CandidateSolution currentCandidate) {
-    static int isUsed[KMaxTreeNode];
-    memset(isUsed, 0x00, sizeof isUsed);
-    int n = g1.n, m = g2.n;
-    for (int i = 1; i <= n; ++i) if (currentCandidate.perm[i]) isUsed[currentCandidate.perm[i]] = 1;
-    GraphTreeSolver::CandidateSolution now = currentCandidate;
+//    static int isUsed[KMaxTreeNode];
+//    memset(isUsed, 0x00, sizeof isUsed);
+//    int n = g1.n, m = g2.n;
+//    int isUsed[m+ 1] = {0};
+//    for (int i = 1; i <= n; ++i) if (currentCandidate.perm[i]) isUsed[currentCandidate.perm[i]] = 1;
+//    GraphTreeSolver::CandidateSolution now = currentCandidate;
     for (int i = 0; i < KMutateNum; ++i) {
         if (rand() % 10 <= 10) {
             insert(mutate(currentCandidate));
@@ -184,12 +187,12 @@ void GraphTreeSolver::getChild(const GraphTreeSolver::CandidateSolution current)
 GraphTreeSolver::CandidateSolution GraphTreeSolver::drawFromCandidate() {
     double total = 0;
     int flag = 0;
-    static const double eps = 1e-8;
-    for (const auto& current: candidate)
+    const double eps = 1e-8;
+    for (const auto &current: candidate)
         if (current.cost != -1) total += 1.0 / (1 + current.cost), flag = 1;
     std::uniform_real_distribution<double> distribution(0, total);
     double drawNumber = distribution(rng);
-    for (auto& current: candidate) {
+    for (auto &current: candidate) {
         if (current.cost == -1) continue;
         double currentP = 1.0 / (1 + current.cost);
         if (drawNumber < currentP + eps) {
@@ -209,11 +212,12 @@ void GraphTreeSolver::insert(const GraphTreeSolver::CandidateSolution &currentCa
     candidate.emplace_back(currentCandidate);
 }
 
-GraphTreeSolver::CandidateSolution GraphTreeSolver::randomSolution() {
+GraphTreeSolver::CandidateSolution GraphTreeSolver::randomSolution() const {
     int n = g1.n, m = g2.n;
-    static int perm[KMaxTreeNode], isUsed[KMaxTreeNode];
-    memset(perm, 0x00, sizeof perm);
-    memset(isUsed, 0x00, sizeof isUsed);
+//    static int perm[KMaxTreeNode], isUsed[KMaxTreeNode];
+//    memset(perm, 0x00, sizeof perm);
+//    memset(isUsed, 0x00, sizeof isUsed);
+    int perm[n + 1] = {0}, isUsed[m + 1] = {0};
     GraphTreeSolver::CandidateSolution result;
     for (int i = 1; i <= n; ++i) {
         int u = rand() % (m + 1);
@@ -259,9 +263,10 @@ void GraphTreeSolver::solve() {
     }
     int round = 0;
     while (checkTL()) {
-        candidate.clear(); isCandidate.clear();
+        candidate.clear();
+        isCandidate.clear();
         for (int i = 0; i < totalCandidate && checkTL(); ++i) getChildNew(current[i]);
-        for (const auto& current: candidate) {
+        for (const auto &current: candidate) {
             if (current.cost < optimal.cost) optimal = current;
         }
         getNewCandidate();
