@@ -19,15 +19,6 @@ using std::endl;
 using std::pair;
 using std::make_pair;
 
-pair<int, vector<int> > Model::better_solve() const {
-    GEDSolver solver(g1, g2, c_node_ins, c_node_sub, c_edge_ins, c_edge_sub, 25);
-    solver.calculate_GED();
-    int* way=solver.get_way();
-    vector<int> ans;
-    for (int i = 1; i <= g1.n; ++i) ans.push_back(way[i]);
-    return make_pair(1, ans);
-}
-
 pair<int, vector<int> > Model::tree_solve() {
     GraphTreeSolver solver(g1, g2, c_edge_ins, c_edge_sub, c_node_ins, c_node_sub, 25);
     solver.solve();

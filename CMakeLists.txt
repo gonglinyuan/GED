@@ -15,10 +15,10 @@ target_include_directories(GED PRIVATE)
 #add_executable(GEDSolver_test GEDSolver_test.cpp GEDSolver.h GEDSolver.cpp Graph.h Graph.cpp
 #        Simplex.h Simplex.cpp)
 
-add_executable(TreeSolver_test TreeSolver_test.cpp TreeSolver.cpp TreeSolver.h)
-
-add_executable(GraphTreeSolver_test GraphTreeSolver_test.cpp GraphTreeSolver.cpp GraphTreeSolver.h
-        TreeSolver.cpp TreeSolver.h Graph.cpp Graph.h)
+#add_executable(TreeSolver_test TreeSolver_test.cpp TreeSolver.cpp TreeSolver.h)
+#
+#add_executable(GraphTreeSolver_test GraphTreeSolver_test.cpp GraphTreeSolver.cpp GraphTreeSolver.h
+#        TreeSolver.cpp TreeSolver.h Graph.cpp Graph.h)
 add_definitions(-O2)
 add_definitions(-lpthread)
 find_package(Threads)

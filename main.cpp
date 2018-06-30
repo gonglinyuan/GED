@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     g2.read_graph(argv[6]);
     Model model(c_node_sub, c_node_ins, c_edge_sub, c_edge_ins, g1, g2);
     auto ans = model.tree_solve();
-   /* cout << ans.first << ';' << "29.99";
+    cout << ans.first << ';' << "29.99";
     bool first_one = true;
     for (int it : ans.second) {
         cout << (first_one ? ";" : " ");
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 #ifdef OUTPUT_DIST
     cout << " ;" << model.check_ans(ans.second);
 #endif
-    cout << endl;*/
-   cout << model.check_ans(ans.second) << endl;
+    cout << endl;
+//   cout << model.check_ans(ans.second) << endl;
     return 0;
 }
