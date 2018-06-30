@@ -16,4 +16,4 @@ for test_set_name in dirs:
     for data_name in datas:
         data_path = test_path + "/" + data_name
         print(data_path)
-        run(["../GED", "2", "4", "1", "1", data_path + "/1.gxl ", data_path + "/2.gxl"])
+        run(["GED", "2", "4", "1", "1", data_path + "/1.gxl ", data_path + "/2.gxl"])
