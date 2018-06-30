@@ -233,5 +233,4 @@ void TreeSolver::checkSolution(int ans) const {
     for (int i = 1; i <= n; ++i) num += (perm[i] > 0);
     assert(total_edge == num - 1 || num == 0);
     assert(num == ans);
-    return;
 }

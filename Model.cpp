@@ -19,7 +19,7 @@ using std::make_pair;
 pair<int, vector<int> > Model::tree_solve() {
     GraphTreeSolver solver(g1, g2, c_edge_ins, c_edge_sub, c_node_ins, c_node_sub, 25);
     solver.solve();
-    auto result = solver.getans();
+    auto result = solver.get_ans();
     assert(result.first == check_ans(result.second));
     return make_pair(1, result.second);
 }

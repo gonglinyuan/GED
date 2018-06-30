@@ -85,6 +85,7 @@ vector<int> GraphTreeSolver::solveTree(Tree t1, Tree t2) const {
     return perm;
 }
 
+// warning: this function is parallel
 int GraphTreeSolver::calculateCost(const int *perm) const {
     int total_cost = 0;
 //    static int isUsed[KMaxTreeNode];
@@ -132,6 +133,7 @@ int GraphTreeSolver::calculateCost(const int *perm) const {
     return total_cost;
 }
 
+// warning: this function is parallel
 GraphTreeSolver::CandidateSolution GraphTreeSolver::mutate(const GraphTreeSolver::CandidateSolution current) const {
     GraphTreeSolver::CandidateSolution now = current;
     int n = g1.n;
@@ -160,44 +162,6 @@ GraphTreeSolver::CandidateSolution GraphTreeSolver::mutate(const GraphTreeSolver
     }
 }
 
-GraphTreeSolver::CandidateSolution GraphTreeSolver::mixTwoCandidate(const GraphTreeSolver::CandidateSolution candidate1,
-                                                                    const GraphTreeSolver::CandidateSolution candidate2) const {
-    return candidate1;
-}
-
-void GraphTreeSolver::getChildNew(const GraphTreeSolver::CandidateSolution currentCandidate) {
-//    static int isUsed[KMaxTreeNode];
-//    memset(isUsed, 0x00, sizeof isUsed);
-//    int n = g1.n, m = g2.n;
-//    int isUsed[m+ 1] = {0};
-//    for (int i = 1; i <= n; ++i) if (currentCandidate.perm[i]) isUsed[currentCandidate.perm[i]] = 1;
-//    GraphTreeSolver::CandidateSolution now = currentCandidate;
-    for (int i = 0; i < KMutateNum; ++i) {
-        if (rand() % 10 <= 10) {
-            insert(mutate(currentCandidate));
-        } else {
-            int u = rand() % totalCandidate;
-            insert(mixTwoCandidate(currentCandidate, current[u]));
-        }
-    }
-//    vector<CandidateSolution> sols;
-//    for (int i = 0; i < KMutateNum; ++i) {
-//        CandidateSolution sol = mutate(currentCandidate);
-//        sols.push_back(sol);
-//    }
-//    mtx.try_lock();
-//    for (const auto &it : sols) {
-//        insert(it);
-//    }
-//    mtx.unlock();
-}
-
-void GraphTreeSolver::getChild(const GraphTreeSolver::CandidateSolution current) {
-    for (int i = 0; i < KMutateNum; ++i) {
-        insert(mutate(current));
-    }
-}
-
 GraphTreeSolver::CandidateSolution GraphTreeSolver::drawFromCandidate() {
     double total = 0;
     int flag = 0;
@@ -219,31 +183,12 @@ GraphTreeSolver::CandidateSolution GraphTreeSolver::drawFromCandidate() {
     assert(0);
 }
 
+// warning: this function is parallel, and should be protected
 void GraphTreeSolver::insert(const GraphTreeSolver::CandidateSolution &currentCandidate) {
-    int num = currentCandidate.getHash();
+    unsigned long long num = currentCandidate.getHash();
     if (isCandidate.find(num) != isCandidate.end()) return;
     isCandidate.insert(num);
     candidate.emplace_back(currentCandidate);
-}
-
-GraphTreeSolver::CandidateSolution GraphTreeSolver::randomSolution() const {
-    int n = g1.n, m = g2.n;
-//    static int perm[KMaxTreeNode], isUsed[KMaxTreeNode];
-//    memset(perm, 0x00, sizeof perm);
-//    memset(isUsed, 0x00, sizeof isUsed);
-    int perm[n + 1] = {0}, isUsed[m + 1] = {0};
-    GraphTreeSolver::CandidateSolution result;
-    for (int i = 1; i <= n; ++i) {
-        int u = rand() % (m + 1);
-        while (u && isUsed[u]) u = rand() % (m + 1);
-        isUsed[u] = 1;
-        perm[i] = u;
-    }
-    for (int i = 1; i <= n; ++i) {
-        result.perm[i] = perm[i];
-    }
-    result.cost = calculateCost(result.perm);
-    return result;
 }
 
 void GraphTreeSolver::getNewCandidate() {
@@ -261,6 +206,7 @@ void GraphTreeSolver::getNewCandidate() {
     assert(totalCandidate <= KMaxKeep);
 }
 
+// warning: this function is parallel
 void GraphTreeSolver::get_all_children(int num) {
     vector<CandidateSolution> sols;
     for (int i = 0; i < totalCandidate; ++i) {
