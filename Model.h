@@ -23,7 +23,6 @@ public:
               g1(g1_), g2(g2_) {
     }
 
-    std::pair<int, std::vector<int> > solve() const;
     std::pair<int, std::vector<int> > tree_solve();
 
     int check_ans(std::vector<int> perm) const;
@@ -32,8 +31,6 @@ private:
     int node_sub_cost(int i, int j) const;
 
     int edge_sub_cost(int i, int j) const;
-
-    int other_costs() const;
 };
 
 
