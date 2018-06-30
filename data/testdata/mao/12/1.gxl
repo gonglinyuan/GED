@@ -48,6 +48,27 @@
 <attr name="chem"><int>6</int>  </attr>
 </node>
 <node id="_16">
+<attr name="chem"><int>6</int>  </attr>
+</node>
+<node id="_17">
+<attr name="chem"><int>6</int>  </attr>
+</node>
+<node id="_18">
+<attr name="chem"><int>6</int>  </attr>
+</node>
+<node id="_19">
+<attr name="chem"><int>6</int>  </attr>
+</node>
+<node id="_20">
+<attr name="chem"><int>6</int>  </attr>
+</node>
+<node id="_21">
+<attr name="chem"><int>6</int>  </attr>
+</node>
+<node id="_22">
+<attr name="chem"><int>6</int>  </attr>
+</node>
+<node id="_23">
 <attr name="chem"><int>8</int>  </attr>
 </node>
 <edge from="_1" to="_2">
@@ -98,7 +119,31 @@
 <edge from="_11" to="_15">
 <attr name="valence"><int>1</int> </attr>
 </edge>
-<edge from="_6" to="_16">
+<edge from="_16" to="_17">
+<attr name="valence"><int>0</int> </attr>
+</edge>
+<edge from="_17" to="_18">
+<attr name="valence"><int>1</int> </attr>
+</edge>
+<edge from="_18" to="_19">
+<attr name="valence"><int>0</int> </attr>
+</edge>
+<edge from="_19" to="_20">
+<attr name="valence"><int>1</int> </attr>
+</edge>
+<edge from="_20" to="_21">
+<attr name="valence"><int>0</int> </attr>
+</edge>
+<edge from="_16" to="_21">
+<attr name="valence"><int>1</int> </attr>
+</edge>
+<edge from="_16" to="_22">
+<attr name="valence"><int>1</int> </attr>
+</edge>
+<edge from="_22" to="_23">
+<attr name="valence"><int>1</int> </attr>
+</edge>
+<edge from="_6" to="_23">
 <attr name="valence"><int>1</int> </attr>
 </edge>
 </graph>

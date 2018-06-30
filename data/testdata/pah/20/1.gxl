@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE gxl SYSTEM "http://www.gupro.de/GXL/gxl-1.0.dtd">
 <gxl>
-<graph id="C24H14" edgeids="false" edgemode="undirected">
+<graph id="C16H10" edgeids="false" edgemode="undirected">
 <node id="_1">
 <attr name="chem"><int>6</int>  </attr>
 </node>
@@ -48,30 +48,6 @@
 <attr name="chem"><int>6</int>  </attr>
 </node>
 <node id="_16">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_17">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_18">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_19">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_20">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_21">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_22">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_23">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_24">
 <attr name="chem"><int>6</int>  </attr>
 </node>
 <edge from="_1" to="_2">
@@ -125,40 +101,10 @@
 <edge from="_15" to="_16">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_11" to="_16">
-<attr name="valence"><int>5</int> </attr>
-</edge>
 <edge from="_7" to="_16">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_10" to="_17">
-<attr name="valence"><int>5</int> </attr>
-</edge>
-<edge from="_17" to="_18">
-<attr name="valence"><int>5</int> </attr>
-</edge>
-<edge from="_18" to="_19">
-<attr name="valence"><int>5</int> </attr>
-</edge>
-<edge from="_19" to="_20">
-<attr name="valence"><int>5</int> </attr>
-</edge>
-<edge from="_9" to="_20">
-<attr name="valence"><int>5</int> </attr>
-</edge>
-<edge from="_6" to="_21">
-<attr name="valence"><int>5</int> </attr>
-</edge>
-<edge from="_21" to="_22">
-<attr name="valence"><int>5</int> </attr>
-</edge>
-<edge from="_22" to="_23">
-<attr name="valence"><int>5</int> </attr>
-</edge>
-<edge from="_23" to="_24">
-<attr name="valence"><int>5</int> </attr>
-</edge>
-<edge from="_5" to="_24">
+<edge from="_11" to="_16">
 <attr name="valence"><int>5</int> </attr>
 </edge>
 </graph>

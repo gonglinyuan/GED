@@ -2,7 +2,7 @@
 <!DOCTYPE gxl SYSTEM "http://www.gupro.de/GXL/gxl-1.0.dtd">
 <gxl>
 
-<graph id="/home/bgauzere/Datasets/Acyclic/dimethyl_peroxide.ct" edgeids="false" edgemode="undirected">
+<graph id="/home/bgauzere/Datasets/Acyclic/diethyl_sulfide.ct" edgeids="false" edgemode="undirected">
 <node id="_1">
 <attr name="chem"><int>6</int>  </attr>
 </node>
@@ -10,10 +10,13 @@
 <attr name="chem"><int>6</int>  </attr>
 </node>
 <node id="_3">
-<attr name="chem"><int>8</int>  </attr>
+<attr name="chem"><int>6</int>  </attr>
 </node>
 <node id="_4">
-<attr name="chem"><int>8</int>  </attr>
+<attr name="chem"><int>6</int>  </attr>
+</node>
+<node id="_5">
+<attr name="chem"><int>16</int>  </attr>
 </node>
 <edge from="_1" to="_3">
 <attr name="valence"><int>1</int> </attr>
@@ -21,7 +24,10 @@
 <edge from="_2" to="_4">
 <attr name="valence"><int>1</int> </attr>
 </edge>
-<edge from="_3" to="_4">
+<edge from="_3" to="_5">
+<attr name="valence"><int>1</int> </attr>
+</edge>
+<edge from="_4" to="_5">
 <attr name="valence"><int>1</int> </attr>
 </edge>
 </graph>

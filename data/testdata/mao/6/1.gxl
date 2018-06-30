@@ -47,9 +47,6 @@
 <node id="_15">
 <attr name="chem"><int>6</int>  </attr>
 </node>
-<node id="_16">
-<attr name="chem"><int>6</int>  </attr>
-</node>
 <edge from="_1" to="_2">
 <attr name="valence"><int>1</int> </attr>
 </edge>
@@ -96,9 +93,6 @@
 <attr name="valence"><int>1</int> </attr>
 </edge>
 <edge from="_11" to="_12">
-<attr name="valence"><int>1</int> </attr>
-</edge>
-<edge from="_11" to="_16">
 <attr name="valence"><int>1</int> </attr>
 </edge>
 </graph>

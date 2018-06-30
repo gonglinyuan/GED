@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE gxl SYSTEM "http://www.gupro.de/GXL/gxl-1.0.dtd">
 <gxl>
-<graph id="C22H14" edgeids="false" edgemode="undirected">
+<graph id="C24H14" edgeids="false" edgemode="undirected">
 <node id="_1">
 <attr name="chem"><int>6</int>  </attr>
 </node>
@@ -68,6 +68,12 @@
 <node id="_22">
 <attr name="chem"><int>6</int>  </attr>
 </node>
+<node id="_23">
+<attr name="chem"><int>6</int>  </attr>
+</node>
+<node id="_24">
+<attr name="chem"><int>6</int>  </attr>
+</node>
 <edge from="_1" to="_2">
 <attr name="valence"><int>5</int> </attr>
 </edge>
@@ -81,6 +87,9 @@
 <attr name="valence"><int>5</int> </attr>
 </edge>
 <edge from="_5" to="_6">
+<attr name="valence"><int>5</int> </attr>
+</edge>
+<edge from="_1" to="_6">
 <attr name="valence"><int>5</int> </attr>
 </edge>
 <edge from="_6" to="_7">
@@ -116,34 +125,40 @@
 <edge from="_16" to="_17">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_12" to="_17">
+<edge from="_17" to="_18">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_17" to="_18">
+<edge from="_5" to="_18">
 <attr name="valence"><int>5</int> </attr>
 </edge>
 <edge from="_18" to="_19">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_10" to="_19">
+<edge from="_8" to="_19">
 <attr name="valence"><int>5</int> </attr>
 </edge>
 <edge from="_19" to="_20">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_7" to="_20">
+<edge from="_11" to="_20">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_20" to="_21">
+<edge from="_15" to="_20">
+<attr name="valence"><int>5</int> </attr>
+</edge>
+<edge from="_13" to="_21">
 <attr name="valence"><int>5</int> </attr>
 </edge>
 <edge from="_21" to="_22">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_1" to="_22">
+<edge from="_22" to="_23">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_5" to="_22">
+<edge from="_23" to="_24">
+<attr name="valence"><int>5</int> </attr>
+</edge>
+<edge from="_12" to="_24">
 <attr name="valence"><int>5</int> </attr>
 </edge>
 </graph>

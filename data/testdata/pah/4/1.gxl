@@ -83,9 +83,6 @@
 <edge from="_7" to="_8">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_3" to="_8">
-<attr name="valence"><int>5</int> </attr>
-</edge>
 <edge from="_8" to="_9">
 <attr name="valence"><int>5</int> </attr>
 </edge>
@@ -101,6 +98,9 @@
 <edge from="_12" to="_13">
 <attr name="valence"><int>5</int> </attr>
 </edge>
+<edge from="_8" to="_13">
+<attr name="valence"><int>5</int> </attr>
+</edge>
 <edge from="_13" to="_14">
 <attr name="valence"><int>5</int> </attr>
 </edge>
@@ -110,13 +110,13 @@
 <edge from="_2" to="_15">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_10" to="_15">
+<edge from="_6" to="_15">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_9" to="_16">
+<edge from="_12" to="_16">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_7" to="_17">
+<edge from="_5" to="_17">
 <attr name="valence"><int>5</int> </attr>
 </edge>
 <edge from="_17" to="_18">
@@ -128,7 +128,7 @@
 <edge from="_19" to="_20">
 <attr name="valence"><int>5</int> </attr>
 </edge>
-<edge from="_6" to="_20">
+<edge from="_4" to="_20">
 <attr name="valence"><int>5</int> </attr>
 </edge>
 </graph>

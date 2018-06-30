@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE gxl SYSTEM "http://www.gupro.de/GXL/gxl-1.0.dtd">
 <gxl>
-<graph id="molecule091.ct" edgeids="false" edgemode="undirected">
+<graph id="molecule9.ct" edgeids="false" edgemode="undirected">
 <node id="_1">
 <attr name="chem"><int>6</int>  </attr>
 </node>
@@ -20,18 +20,6 @@
 <node id="_6">
 <attr name="chem"><int>6</int>  </attr>
 </node>
-<node id="_7">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_8">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_9">
-<attr name="chem"><int>6</int>  </attr>
-</node>
-<node id="_10">
-<attr name="chem"><int>6</int>  </attr>
-</node>
 <edge from="_1" to="_2">
 <attr name="valence"><int>1</int> </attr>
 </edge>
@@ -41,22 +29,10 @@
 <edge from="_3" to="_4">
 <attr name="valence"><int>1</int> </attr>
 </edge>
-<edge from="_4" to="_5">
+<edge from="_3" to="_5">
 <attr name="valence"><int>1</int> </attr>
 </edge>
-<edge from="_4" to="_6">
-<attr name="valence"><int>1</int> </attr>
-</edge>
-<edge from="_3" to="_7">
-<attr name="valence"><int>1</int> </attr>
-</edge>
-<edge from="_2" to="_8">
-<attr name="valence"><int>1</int> </attr>
-</edge>
-<edge from="_9" to="_10">
-<attr name="valence"><int>1</int> </attr>
-</edge>
-<edge from="_3" to="_9">
+<edge from="_2" to="_6">
 <attr name="valence"><int>1</int> </attr>
 </edge>
 </graph>
