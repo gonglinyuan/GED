@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
 project(GED)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
+add_compile_options(-O2)
+add_compile_options(-march=native)
 
 add_executable(GED main.cpp Graph.cpp Graph.h Model.cpp Model.h main.h GraphTreeSolver.cpp GraphTreeSolver.h
         TreeSolver.h TreeSolver.cpp)
-target_include_directories(GED PRIVATE)
 
 #add_executable(IPsolver_test IPsolver_test.cpp IPSolver.cpp IPSolver.h Simplex.cpp Simplex.h)
 #
@@ -18,7 +19,6 @@ target_include_directories(GED PRIVATE)
 #
 #add_executable(GraphTreeSolver_test GraphTreeSolver_test.cpp GraphTreeSolver.cpp GraphTreeSolver.h
 #        TreeSolver.cpp TreeSolver.h Graph.cpp Graph.h)
-add_compile_options(-O2)
-add_compile_options(-march=native)
+
 find_package(Threads)
 target_link_libraries (${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
