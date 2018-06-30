@@ -6,5 +6,5 @@
 #define GED_MAIN_H
 
 //#define DEBUG
-//#define OUTPUT_DIST
+#define OUTPUT_DIST
 #endif //GED_MAIN_H

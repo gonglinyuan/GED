@@ -16,8 +16,8 @@
 #include "TreeSolver.h"
 #include "Graph.h"
 
-const int KMaxKeep = 70;
-const int KMutateNum = 20;
+const int KMaxKeep = 100;
+const int KMutateNum = 25;
 const int KKeepFirstNum = 40;
 
 class GraphTreeSolver {
