@@ -2,9 +2,12 @@ import os
 import xml.etree.ElementTree as ET
 import random
 
-subsets = ["40", "50", "60", "70"]
+subsets = ["10", "20", "30", "40", "50", "60", "70", "mix"]
 for subset_size in subsets:
-	xml_file = "MUTA-GED/Mutagenicity-subsets/train" + subset_size + ".cxl"
+	if subset_size == "mix":
+		xml_file = "MUTA-GED/Mutagenicity-subsets/mixed-graphs.cxl"
+	else:
+		xml_file = "MUTA-GED/Mutagenicity-subsets/train" + subset_size + ".cxl"
 	tree = ET.parse(xml_file)
 	root = tree.getroot()[0]
 	data_name = []
